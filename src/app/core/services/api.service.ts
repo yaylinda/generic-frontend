@@ -15,6 +15,7 @@ export class ApiService {
   ) {}
 
   private formatErrors(error: any) {
+    console.log(error);
     return new ErrorObservable(error.error);
   }
 

@@ -3,15 +3,7 @@
     <a class="navbar-brand" routerLink="/">Simple War</a>
 
     <!-- Show this for logged out users -->
-    <ul *appShowAuthed="false"
-      class="nav navbar-nav pull-xs-right">
-
-      <!-- <li class="nav-item">
-        <a class="nav-link"
-          routerLink="/">
-          Home
-        </a>
-      </li> -->
+    <ul *appShowAuthed="false" class="nav navbar-nav pull-xs-right">
 
       <li class="nav-item">
         <a class="nav-link"
@@ -35,29 +27,21 @@
     <ul *appShowAuthed="true"
       class="nav navbar-nav pull-xs-right">
 
-      <!-- <li class="nav-item">
-        <a class="nav-link"
-          routerLink="/"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }">
-          Home
-        </a>
-      </li> -->
-
-      <!-- <li class="nav-item">
-        <a class="nav-link"
-          routerLink="/settings"
-          routerLinkActive="active">
-          <i class="ion-gear-a"></i>&nbsp;Settings
-        </a>
-      </li> -->
-
       <li class="nav-item">
         <a class="nav-link"
           [routerLink]="['/profile', currentUser.username]"
           routerLinkActive="active">
-          <img [src]="currentUser.image" *ngIf="currentUser.image" class="user-pic" />
-          {{ currentUser.username }}
+          Profile
+        </a>
+      </li>
+
+      <!-- TODO: FIX THIS TO REFRESH PAGE AFTER LOGOUT -->
+      <li class="nav-item">
+        <a class="nav-link"
+          routerLink="/login"
+          (click)="logout()"
+          routerLinkActive="active">
+          Sign Out
         </a>
       </li>
 

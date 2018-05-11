@@ -6,7 +6,6 @@ import { HttpTokenInterceptor } from './interceptors/http.token.interceptor';
 import {
   ApiService,
   AuthGuard,
-  CommentsService,
   JwtService,
   ProfilesService,
   UserService
@@ -20,7 +19,6 @@ import {
     { provide: HTTP_INTERCEPTORS, useClass: HttpTokenInterceptor, multi: true },
     ApiService,
     AuthGuard,
-    CommentsService,
     JwtService,
     ProfilesService,
     UserService

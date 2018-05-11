@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Errors, UserService } from '../core';
+import { UserService } from '../core';
 
 @Component({
   selector: 'app-auth-page',
@@ -11,7 +11,7 @@ import { Errors, UserService } from '../core';
 export class AuthComponent implements OnInit {
   authType: String = '';
   title: String = '';
-  errors: Errors = {errors: {}};
+  errors: string[] = [];
   isSubmitting = false;
   authForm: FormGroup;
 
@@ -30,6 +30,7 @@ export class AuthComponent implements OnInit {
 
   ngOnInit() {
     this.route.url.subscribe(data => {
+      console.log("route.url from auth.component:", data);
       // Get the last piece of the URL (it's either 'login' or 'register')
       this.authType = data[data.length - 1].path;
       // Set a title for the page accordingly
@@ -43,7 +44,7 @@ export class AuthComponent implements OnInit {
 
   submitForm() {
     this.isSubmitting = true;
-    this.errors = {errors: {}};
+    this.errors = [];
 
     const credentials = this.authForm.value;
     this.userService
@@ -51,9 +52,11 @@ export class AuthComponent implements OnInit {
     .subscribe(
       data => this.router.navigateByUrl('/'),
       err => {
-        this.errors = err;
+        console.log(err);
+        this.errors.push(err.message);
         this.isSubmitting = false;
       }
     );
   }
+  
 }
