@@ -19,6 +19,8 @@ export class HomeComponent implements OnInit {
   isAuthenticated: boolean;
   currentUser: User;
   games: Game[] = [];
+  newGame: Game;
+  inGameMode: boolean = false;
 
   ngOnInit() {
     this.userService.isAuthenticated.subscribe((authenticated) => {
@@ -27,8 +29,8 @@ export class HomeComponent implements OnInit {
           console.log(authenticated);
           this.currentUser = this.userService.getCurrentUser();
           this.gameService.getGamesForUser(this.currentUser.username).subscribe(data => {
+            console.log("GET GAMES result from game service: ", data);
             this.games = data;
-            console.log("result from game service: ", this.games);
           });
         }
       });
@@ -36,5 +38,15 @@ export class HomeComponent implements OnInit {
 
   startGame() {
     console.log('start game pressed');
+    this.inGameMode = true;
+    this.gameService.startGame(this.currentUser.username).subscribe(data => {
+      console.log("START GAME result from game service: ", data);
+      this.games = data.games;
+      this.newGame = data.newGame;
+    })
+  }
+
+  submitTurn() {
+    console.log('submit turn pressed')
   }
 }

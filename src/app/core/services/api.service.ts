@@ -19,11 +19,6 @@ export class ApiService {
     return new ErrorObservable(error.error);
   }
 
-  getUserFromToken(token: string): Observable<any> {
-    return this.http.get(environment.api_url + '/user/' + token)
-      .pipe(catchError(this.formatErrors));
-  }
-
   get(path: string, params: HttpParams = new HttpParams()): Observable<any> {
     return this.http.get(`${environment.api_url}${path}`, { params })
       .pipe(catchError(this.formatErrors));

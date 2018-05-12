@@ -22,17 +22,29 @@
 
       <div id="main-panel" class="col-md-9 panel">
 
-        <h3>Your Active Games ({{games.length}}):</h3>
-        <p *ngIf="games.length == 0">You don't have active games :(</p>
+        <h3>Your Active Games [{{games.length}}]</h3>
+        <p *ngIf="games.length == 0">You have 0 active games... start a new one!</p>
+
+        <ul class="games-list" *ngIf="games">
+          <li *ngFor="let game of games">
+              {{ game.status }} - {{ game.username }} vs. {{ game.opponentName }} - myTurn:{{ game.currentTurn }}
+          </li>
+        </ul>
 
         <hr>
 
-        <button (click)="startGame()">Start New Game</button>
+        <button *ngIf="!inGameMode" (click)="startGame()">Start New Game</button>
+
+        <div *ngIf="inGameMode && newGame">
+          <p>{{ newGame.username }} vs. {{ newGame.opponentName }}</p>
+          GAMEBOARD HERE
+          <button (click)="submitTurn()">Submit Turn</button>
+        </div>
 
       </div>
 
       <div id="side-panel" class="col-md-3 panel">
-        
+        TODO
       </div>
     </div>
 

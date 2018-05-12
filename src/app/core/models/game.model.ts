@@ -7,4 +7,5 @@ export interface Game {
     currentTurn: boolean;
     points: number;
     energy: number;
+    status: string;
 }
