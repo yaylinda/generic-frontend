@@ -74,6 +74,7 @@ export class UserService {
   }
 
   getCurrentUser(): User {
+    console.log("getCurrentUser: ", this.currentUserSubject.value);
     return this.currentUserSubject.value;
   }
 

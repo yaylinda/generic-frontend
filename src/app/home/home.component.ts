@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 
-import { UserService } from '../core';
+import { UserService, User, Game } from '../core';
+import { GameService } from '../core/services/game.service';
 
 @Component({
   selector: 'app-home-page',
@@ -11,30 +12,29 @@ import { UserService } from '../core';
 export class HomeComponent implements OnInit {
   constructor(
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private gameService: GameService
   ) { }
 
   isAuthenticated: boolean;
+  currentUser: User;
+  games: Game[] = [];
 
   ngOnInit() {
-    this.userService.isAuthenticated.subscribe(
-      (authenticated) => {
+    this.userService.isAuthenticated.subscribe((authenticated) => {
         this.isAuthenticated = authenticated;
-        // set the article list accordingly
         if (authenticated) {
-          this.setListTo('feed');
-        } else {
-          this.setListTo('all');
+          console.log(authenticated);
+          this.currentUser = this.userService.getCurrentUser();
+          this.gameService.getGamesForUser(this.currentUser.username).subscribe(data => {
+            this.games = data;
+            console.log("result from game service: ", this.games);
+          });
         }
-      }
-    );
+      });
   }
 
-  setListTo(type: string = '', filters: Object = {}) {
-    // If feed is requested but user is not authenticated, redirect to login
-    if (type === 'feed' && !this.isAuthenticated) {
-      this.router.navigateByUrl('/login');
-      return;
-    }
+  startGame() {
+    console.log('start game pressed');
   }
 }

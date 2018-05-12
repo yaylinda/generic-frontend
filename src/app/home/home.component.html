@@ -4,20 +4,41 @@
     <div class="container">
       <h1 class="logo-font">Simple War</h1>
       <p>Play a friendly game of Simple War!</p>
+      <p *appShowAuthed="true">Welcome {{currentUser.username}}!</p>
+    </div>
+  </div>
+
+  <div class="banner" *appShowAuthed="true">
+    <div class="container">
+      <h1 class="logo-font">Simple War</h1>
+      <p *appShowAuthed="true">Welcome {{currentUser.username}}!</p>
     </div>
   </div>
 
   <div class="container page">
-    <div class="row">
 
-      <div class="col-md-9">
-        
+    <!-- Logged in content -->
+    <div class="row" *appShowAuthed="true">
+
+      <div id="main-panel" class="col-md-9 panel">
+
+        <h3>Your Active Games ({{games.length}}):</h3>
+        <p *ngIf="games.length == 0">You don't have active games :(</p>
+
+        <hr>
+
+        <button (click)="startGame()">Start New Game</button>
+
       </div>
 
-      <div class="col-md-3">
+      <div id="side-panel" class="col-md-3 panel">
         
       </div>
+    </div>
 
+    <!-- Logged out content -->
+    <div class="row" *appShowAuthed="false">
+      Log in or register to see more content :)
     </div>
   </div>
 </div>
