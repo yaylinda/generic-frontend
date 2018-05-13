@@ -1,6 +1,7 @@
 import { GameBoard } from './gameboard.model';
 
 export interface Game {
+    id: string;
     username: string;
     opponentName: string;
     gameBoard: GameBoard;

@@ -18,9 +18,16 @@ export class GameService {
     }));
   }
 
-  startGame(username: string): Observable<StartGameResponse> {
+  startGame(username: string): Observable<Game> {
     return this.apiService.get('/game/start/' + username).pipe(map(data =>{
       console.log('result from start game: ', data);
+      return data;
+    }));
+  }
+
+  endTurn(gameId: string, username: string): Observable<Game> {
+    return this.apiService.get('/game/endTurn/' + gameId + '/' + username).pipe(map(data => {
+      console.log('result from end turn: ', data);
       return data;
     }));
   }

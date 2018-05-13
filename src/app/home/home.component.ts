@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
   isAuthenticated: boolean;
   currentUser: User;
   games: Game[] = [];
-  newGame: Game;
+  activeGame: Game;
   inGameMode: boolean = false;
 
   ngOnInit() {
@@ -38,15 +38,31 @@ export class HomeComponent implements OnInit {
 
   startGame() {
     console.log('start game pressed');
-    this.inGameMode = true;
-    this.gameService.startGame(this.currentUser.username).subscribe(data => {
-      console.log("START GAME result from game service: ", data);
-      this.games = data.games;
-      this.newGame = data.newGame;
-    })
+    this.gameService.startGame(this.currentUser.username).subscribe(newGame => {
+      console.log("START GAME result from game service: ", newGame);
+      this.activeGame = newGame;
+      this.gameService.getGamesForUser(this.currentUser.username).subscribe(games => {
+        this.games = games;
+      });
+    });
   }
 
-  submitTurn() {
-    console.log('submit turn pressed')
+  endTurn() {
+    console.log('submit turn pressed');
+    if (this.activeGame.currentTurn) {
+      this.gameService.endTurn(this.activeGame.id, this.activeGame.username).subscribe(game => {
+        console.log("END TURN result from game service: ", game);
+        this.activeGame = game;
+        this.gameService.getGamesForUser(this.currentUser.username).subscribe(games => {
+          this.games = games;
+        });
+      });
+    } else {
+      console.log("it is not your turn, so you can't end it");
+    }
+  }
+
+  setActiveGame(game: Game) {
+    this.activeGame = game;
   }
 }
