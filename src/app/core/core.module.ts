@@ -23,8 +23,9 @@ import {
     GameService,
     JwtService,
     ProfilesService,
-    UserService
+    UserService,
   ],
   declarations: []
 })
+
 export class CoreModule { }

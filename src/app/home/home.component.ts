@@ -4,6 +4,9 @@ import { Router, NavigationEnd } from '@angular/router';
 import { UserService, User, Game } from '../core';
 import { GameService } from '../core/services/game.service';
 
+import * as Stomp from 'stompjs';
+import * as SockJS from 'sockjs-client';
+
 @Component({
   selector: 'app-home-page',
   templateUrl: './home.component.html',
@@ -21,6 +24,7 @@ export class HomeComponent implements OnInit {
   games: Game[] = [];
   activeGame: Game;
   inGameMode: boolean = false;
+  stompClient;
 
   ngOnInit() {
     this.userService.isAuthenticated.subscribe((authenticated) => {
@@ -34,6 +38,29 @@ export class HomeComponent implements OnInit {
           });
         }
       });
+    this.initializeWebSocketConnection();      
+  }
+
+  initializeWebSocketConnection() {
+    let ws = new SockJS('http://localhost:8080/socket/');
+    this.stompClient = Stomp.over(ws);
+    let that = this;
+    this.stompClient.connect({}, function(frame) {
+      console.log('initializing stomp client');
+      that.stompClient.subscribe("/topic/opponentEndedTurn", (message) => {
+        console.log("result from subscribe: " + message);
+        if(message.body) {
+          that.gameService.getGameByGameIdAndUsername(message.body, that.currentUser.username).subscribe(game => {
+            console.log('result from getGameByGameIdAndUsername:', game)
+            that.activeGame = game;
+          });
+          that.gameService.getGamesForUser(that.currentUser.username).subscribe(games => {
+            console.log('result from getGamesForUser (after getting message):', games)
+            that.games = games;
+          });
+        }
+      });
+    });
   }
 
   startGame() {
