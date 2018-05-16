@@ -17,8 +17,11 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private gameService: GameService
-  ) { }
+  ) { 
+  }
 
+  numRows: number[] = [0,1,2,3,4];
+  numCols: number[] = [0,1,2,3];
   isAuthenticated: boolean;
   currentUser: User;
   games: Game[] = [];
@@ -35,6 +38,10 @@ export class HomeComponent implements OnInit {
           this.gameService.getGamesForUser(this.currentUser.username).subscribe(data => {
             console.log("GET GAMES result from game service: ", data);
             this.games = data;
+            if (this.games.length > 0) {
+              this.activeGame = this.games[0];
+            }
+            console.log("ACTIVE GAME: ", this.activeGame);
           });
         }
       });
@@ -42,13 +49,17 @@ export class HomeComponent implements OnInit {
   }
 
   initializeWebSocketConnection() {
+
     let ws = new SockJS('http://localhost:8080/socket/');
     this.stompClient = Stomp.over(ws);
     let that = this;
+
     this.stompClient.connect({}, function(frame) {
+
       console.log('initializing stomp client');
-      that.stompClient.subscribe("/topic/opponentEndedTurn", (message) => {
-        console.log("result from subscribe: " + message);
+
+      that.stompClient.subscribe("/topic/opponentEndedTurn/" + that.currentUser.username, (message) => {
+        console.log("result from subscribe opponentEndedTurn: " + message);
         if(message.body) {
           that.gameService.getGameByGameIdAndUsername(message.body, that.currentUser.username).subscribe(game => {
             console.log('result from getGameByGameIdAndUsername:', game)
@@ -57,6 +68,16 @@ export class HomeComponent implements OnInit {
           that.gameService.getGamesForUser(that.currentUser.username).subscribe(games => {
             console.log('result from getGamesForUser (after getting message):', games)
             that.games = games;
+          });
+        }
+      });
+
+      that.stompClient.subscribe("/topic/opponentPutCard/" + that.currentUser.username, (message) => {
+        console.log("result from subscribe opponentPutCard: " + message);
+        if(message.body) {
+          that.gameService.getGameByGameIdAndUsername(message.body, that.currentUser.username).subscribe(game => {
+            console.log('result from getGameByGameIdAndUsername:', game)
+            that.activeGame = game;
           });
         }
       });
@@ -91,5 +112,10 @@ export class HomeComponent implements OnInit {
 
   setActiveGame(game: Game) {
     this.activeGame = game;
+    console.log('updated active game: ', this.activeGame);
+  }
+
+  processClickedCell(rowNum: number, colNum: number) {
+    console.log('clicked rowNum=' + rowNum + ', colNume=', colNum)
   }
 }

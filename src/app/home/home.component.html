@@ -22,29 +22,33 @@
 
       <div id="main-panel" class="col-md-9 panel">
 
-        <h3>Your Wars [{{games.length}}]</h3>
-        <p *ngIf="games.length == 0">You have 0 active wars... start a new one!</p>
-
-        <ul class="games-list" *ngIf="games">
-          <li *ngFor="let game of games" (click)="setActiveGame(game)">
-              {{ game.status }} - {{ game.username }} vs. {{ game.opponentName }} - myTurn:{{ game.currentTurn }}
-          </li>
-        </ul>
-
-        <hr>
-
-        <button *ngIf="!activeGame" (click)="startGame()">Start New War</button>
-
         <div *ngIf="activeGame">
-          <p>{{ activeGame.username }} vs. {{ activeGame.opponentName }}</p>
-          GAMEBOARD HERE
+          <h3>{{ activeGame.username }} vs. {{ activeGame.opponentName }}</h3>
+          <table>
+              <tr *ngFor="let rowNum of numRows">
+                  <td *ngFor="let colNum of numCols" (click)="processClickedCell(rowNum, colNum)" >
+                    <!-- <p>{{activeGame.board[rowNum][colNum].type}}</p>
+                    <p>{{activeGame.board[rowNum][colNum].might}}</p>
+                    <p>{{activeGame.board[rowNum][colNum].move}}</p> -->
+                  </td>
+                </tr>
+          </table>
           <button (click)="endTurn()" [disabled]="!activeGame.currentTurn">End Turn</button>
         </div>
 
       </div>
 
       <div id="side-panel" class="col-md-3 panel">
-        TODO
+          <h3>Your Wars [{{games.length}}]</h3>
+          <p *ngIf="games.length == 0">You have 0 active wars... start a new one!</p>
+  
+          <ul class="games-list" *ngIf="games">
+            <li *ngFor="let game of games" (click)="setActiveGame(game)">
+                {{ game.status }} - {{ game.username }} vs. {{ game.opponentName }} - myTurn:{{ game.currentTurn }}
+            </li>
+          </ul>
+
+          <button *ngIf="!activeGame" (click)="startGame()">Start New War</button>
       </div>
     </div>
 
