@@ -135,18 +135,17 @@ export class HomeComponent implements OnInit {
     if (this.previouslyClickedCard && !this.activeGame.board[rowNum][colNum].card) {
       this.activeGame.board[rowNum][colNum].card = this.previouslyClickedCard;
       let usedCardIndex = this.activeGame.cards.indexOf(this.previouslyClickedCard);
-      this.activeGame.cards.splice(usedCardIndex, 1);
-
-      this.gameService.drawCard(this.activeGame.username).subscribe(card => {
-        console.log('drew new card: ', card);
-        card.justDrew = true;
-        this.activeGame.cards.splice(usedCardIndex, 0, card);
-      });
 
       this.gameService.putCardOnBoard(this.activeGame.id, this.activeGame.username, rowNum, colNum, this.previouslyClickedCard)
         .subscribe(game => {
           this.activeGame = game;
+          this.gameService.drawCard(this.activeGame.id, this.activeGame.username, usedCardIndex).subscribe(card => {
+            console.log('drew new card: ', card);
+            card.justDrew = true;
+            this.activeGame.cards.splice(usedCardIndex, 1, card);
+          });
         });
+
       this.previouslyClickedCard = null;
     }
   }

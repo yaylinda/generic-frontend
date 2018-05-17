@@ -46,8 +46,8 @@ export class GameService {
     }));
   }
 
-  drawCard(username: string): Observable<Card> {
-    return this.apiService.get('/game/card/' + username).pipe(map(data => {
+  drawCard(gameId: string, username: string, usedCardIndex: number): Observable<Card> {
+    return this.apiService.get('/game/card/' + gameId + '/' + username + '/' + usedCardIndex).pipe(map(data => {
       return data;
     }))
   }
