@@ -37,9 +37,10 @@ tr {
 
 table tr td p {
   margin-bottom: 0;
+  text-align: center;
 }
 
-.cell:hover {
+.playable:hover {
   background-color: #E1FEE0;
   cursor: pointer;
 }
@@ -99,6 +100,15 @@ table tr td p {
 
 #card p {
   margin-bottom: 0;
+  text-align: center;
+}
+
+.mine {
+  color: green;
+}
+
+.notmine {
+  color: red;
 }
 
 .highlight-card {

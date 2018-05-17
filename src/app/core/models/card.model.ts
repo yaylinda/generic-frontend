@@ -5,4 +5,5 @@ export interface Card {
     movement: number;
     cost: number;
     clicked: boolean;
+    justDrew: boolean;
 }

@@ -28,10 +28,11 @@
 
           <table>
             <tr *ngFor="let rowNum of numRows">
-                <td class="cell" *ngFor="let colNum of numCols" (click)="processClickedCell(rowNum, colNum)" >
+                <td *ngFor="let colNum of numCols" (click)="processClickedCell(rowNum, colNum)" 
+                    [ngClass]="[(activeGame.currentTurn && (rowNum >= activeGame.board.length-1)) ? 'playable' : '', (activeGame.board[rowNum][colNum].card && activeGame.board[rowNum][colNum].card.owner === activeGame.username) ? 'mine' : 'notmine']">
                   <p *ngIf="activeGame.board[rowNum][colNum].card">{{activeGame.board[rowNum][colNum].card.type}}</p>
-                  <p *ngIf="activeGame.board[rowNum][colNum].card">{{activeGame.board[rowNum][colNum].card.might}}</p>
-                  <p *ngIf="activeGame.board[rowNum][colNum].card">{{activeGame.board[rowNum][colNum].card.movement}}</p>
+                  <p *ngIf="activeGame.board[rowNum][colNum].card">Might: {{activeGame.board[rowNum][colNum].card.might}}</p>
+                  <p *ngIf="activeGame.board[rowNum][colNum].card">Movement: {{activeGame.board[rowNum][colNum].card.movement}}</p>
                 </td>
               </tr>
           </table>

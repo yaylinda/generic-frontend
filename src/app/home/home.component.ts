@@ -132,7 +132,7 @@ export class HomeComponent implements OnInit {
 
   processClickedCell(rowNum: number, colNum: number) {
     console.log('clicked rowNum=' + rowNum + ', colNum=', colNum, 'previouslyClickedCard=', this.previouslyClickedCard);
-    if (this.previouslyClickedCard && !this.activeGame.board[rowNum][colNum].card) {
+    if (this.previouslyClickedCard && !this.activeGame.board[rowNum][colNum].card && this.activeGame.currentTurn && rowNum >= this.activeGame.board.length - 1) {
       this.activeGame.board[rowNum][colNum].card = this.previouslyClickedCard;
       let usedCardIndex = this.activeGame.cards.indexOf(this.previouslyClickedCard);
 
