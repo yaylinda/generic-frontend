@@ -116,14 +116,14 @@ table tr td p {
 }
 
 .just-drew {
-  animation: background-fade 5s forwards;
+  animation: border-fade 5s forwards;
 }
 
-@keyframes background-fade {
+@keyframes border-fade {
   0% {
-    background:#E1FEE0;
+    border: 2px solid greenyellow;
   }
   100% {
-    background:white;
+    border: 2px solid #1c97ee;
   }
 }
