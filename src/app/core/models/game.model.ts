@@ -12,5 +12,5 @@ export interface Game {
     points: number;
     energy: number;
     status: string;
-    hand: Card[];
+    cards: Card[];
 }

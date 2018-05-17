@@ -23,17 +23,38 @@
       <div id="main-panel" class="col-md-9 panel">
 
         <div *ngIf="activeGame">
+
           <h3>{{ activeGame.username }} vs. {{ activeGame.opponentName }}</h3>
+
           <table>
-              <tr *ngFor="let rowNum of numRows">
-                  <td *ngFor="let colNum of numCols" (click)="processClickedCell(rowNum, colNum)" >
-                    <!-- <p>{{activeGame.board[rowNum][colNum].type}}</p>
-                    <p>{{activeGame.board[rowNum][colNum].might}}</p>
-                    <p>{{activeGame.board[rowNum][colNum].move}}</p> -->
-                  </td>
-                </tr>
+            <tr *ngFor="let rowNum of numRows">
+                <td class="cell" *ngFor="let colNum of numCols" (click)="processClickedCell(rowNum, colNum)" >
+                  <p *ngIf="activeGame.board[rowNum][colNum].card">{{activeGame.board[rowNum][colNum].card.type}}</p>
+                  <p *ngIf="activeGame.board[rowNum][colNum].card">{{activeGame.board[rowNum][colNum].card.might}}</p>
+                  <p *ngIf="activeGame.board[rowNum][colNum].card">{{activeGame.board[rowNum][colNum].card.movement}}</p>
+                </td>
+              </tr>
           </table>
-          <button (click)="endTurn()" [disabled]="!activeGame.currentTurn">End Turn</button>
+
+          <div id="hand">
+
+            <!-- <div id="game-stats">
+              <p *ngIf="activeGame.currentTurn == activeGame.username">My Turn</p>
+              <p *ngIf="activeGame.currentTurn != activeGame.username">{{ activeGame.opponentName }}'s' Turn</p>
+              <p>Energy: {{activeGame.energy}}</p>
+            </div> -->
+
+            <div id="card" *ngFor="let card of activeGame.cards" [ngClass]="[card.clicked ? 'highlight-card' : '', card.justDrew ? 'just-drew' : '']" (click)="processClickedCard(card)">
+              <p>{{card.type}}</p>
+              <p>Cost: {{card.cost}}</p>
+              <p>Might: {{card.might}}</p>
+              <p>Movement: {{card.movement}}</p>
+            </div>
+
+            <button id="end-turn-btn" (click)="endTurn()" [disabled]="!activeGame.currentTurn">End Turn</button>
+            
+          </div>
+
         </div>
 
       </div>

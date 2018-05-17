@@ -6,6 +6,7 @@ import { GameService } from '../core/services/game.service';
 
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
+import { Card } from '../core/models/card.model';
 
 @Component({
   selector: 'app-home-page',
@@ -26,6 +27,7 @@ export class HomeComponent implements OnInit {
   currentUser: User;
   games: Game[] = [];
   activeGame: Game;
+  previouslyClickedCard: Card;
   inGameMode: boolean = false;
   stompClient;
 
@@ -115,7 +117,38 @@ export class HomeComponent implements OnInit {
     console.log('updated active game: ', this.activeGame);
   }
 
-  processClickedCell(rowNum: number, colNum: number) {
-    console.log('clicked rowNum=' + rowNum + ', colNume=', colNum)
+  processClickedCard(card: Card) {
+    console.log('clicked card: ', card);
+    if (this.previouslyClickedCard && this.previouslyClickedCard != card) {
+      this.previouslyClickedCard.clicked = false;
+    }
+    if (card.clicked) {
+      card.clicked = false;
+    } else {
+      card.clicked = true;
+    }
+    this.previouslyClickedCard = card;
   }
+
+  processClickedCell(rowNum: number, colNum: number) {
+    console.log('clicked rowNum=' + rowNum + ', colNum=', colNum, 'previouslyClickedCard=', this.previouslyClickedCard);
+    if (this.previouslyClickedCard && !this.activeGame.board[rowNum][colNum].card) {
+      this.activeGame.board[rowNum][colNum].card = this.previouslyClickedCard;
+      let usedCardIndex = this.activeGame.cards.indexOf(this.previouslyClickedCard);
+      this.activeGame.cards.splice(usedCardIndex, 1);
+
+      this.gameService.drawCard(this.activeGame.username).subscribe(card => {
+        console.log('drew new card: ', card);
+        card.justDrew = true;
+        this.activeGame.cards.splice(usedCardIndex, 0, card);
+      });
+
+      this.gameService.putCardOnBoard(this.activeGame.id, this.activeGame.username, rowNum, colNum, this.previouslyClickedCard)
+        .subscribe(game => {
+          this.activeGame = game;
+        });
+      this.previouslyClickedCard = null;
+    }
+  }
+
 }
