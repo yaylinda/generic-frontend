@@ -10,7 +10,9 @@ export interface Game {
     previousBoard: Cell[][];
     currentTurn: boolean;
     points: number;
+    opponentPoints: number;
     energy: number;
     status: string;
     cards: Card[];
+    numCardsPlayed: number;
 }

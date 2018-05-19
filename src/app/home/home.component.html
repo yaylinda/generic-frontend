@@ -24,7 +24,13 @@
 
         <div *ngIf="activeGame">
 
-          <h3>{{ activeGame.username }} vs. {{ activeGame.opponentName }}</h3>
+          <h3 *ngIf="activeGame.opponentName">{{ activeGame.username }} vs. {{ activeGame.opponentName }}</h3>
+          <h3 *ngIf="!activeGame.opponentName">{{ activeGame.username }}'s new Simple War</h3>
+
+          <div id="game-stats">
+            <p *ngIf="activeGame.currentTurn">My Turn || Energy: {{activeGame.energy}} || My Points: {{activeGame.points}} || Opponent's Points: {{activeGame.opponentPoints}} || Cards Played: {{activeGame.numCardsPlayed}}</p>
+            <p *ngIf="!activeGame.currentTurn">Opponent's Turn || Energy: {{activeGame.energy}} || My Points: {{activeGame.points}} || Opponent's Points: {{activeGame.opponentPoints}} || Cards Played: {{activeGame.numCardsPlayed}}</p>
+          </div>
 
           <table>
             <tr *ngFor="let rowNum of numRows">
@@ -38,22 +44,16 @@
           </table>
 
           <div id="hand">
-
-            <!-- <div id="game-stats">
-              <p *ngIf="activeGame.currentTurn == activeGame.username">My Turn</p>
-              <p *ngIf="activeGame.currentTurn != activeGame.username">{{ activeGame.opponentName }}'s' Turn</p>
-              <p>Energy: {{activeGame.energy}}</p>
-            </div> -->
-
             <div id="card" *ngFor="let card of activeGame.cards" [ngClass]="[card.clicked ? 'highlight-card' : '', card.justDrew ? 'just-drew' : '']" (click)="processClickedCard(card)">
               <p>{{card.type}}</p>
               <p>Cost: {{card.cost}}</p>
               <p>Might: {{card.might}}</p>
               <p>Movement: {{card.movement}}</p>
-            </div>
+            </div>            
+          </div>
 
-            <button id="end-turn-btn" (click)="endTurn()" [disabled]="!activeGame.currentTurn">End Turn</button>
-            
+          <div id="end-turn-btn-div">
+            <button *ngIf="activeGame.currentTurn" id="end-turn-btn" (click)="endTurn()">End Turn</button>          
           </div>
 
         </div>
@@ -62,7 +62,7 @@
 
       <div id="side-panel" class="col-md-3 panel">
           <h3>Your Wars [{{games.length}}]</h3>
-          <p *ngIf="games.length == 0">You have 0 active wars... start a new one!</p>
+          <p *ngIf="games.length == 0">You are in 0 Simple Wars... start a new one!</p>
   
           <ul class="games-list" *ngIf="games">
             <li *ngFor="let game of games" (click)="setActiveGame(game)">

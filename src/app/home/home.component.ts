@@ -14,12 +14,12 @@ import { Card } from '../core/models/card.model';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+
   constructor(
     private router: Router,
     private userService: UserService,
     private gameService: GameService
-  ) { 
-  }
+  ) { }
 
   numRows: number[] = [0,1,2,3,4];
   numCols: number[] = [0,1,2,3];
@@ -51,14 +51,11 @@ export class HomeComponent implements OnInit {
   }
 
   initializeWebSocketConnection() {
-
     let ws = new SockJS('http://localhost:8080/socket/');
     this.stompClient = Stomp.over(ws);
     let that = this;
 
     this.stompClient.connect({}, function(frame) {
-
-      console.log('initializing stomp client');
 
       that.stompClient.subscribe("/topic/opponentEndedTurn/" + that.currentUser.username, (message) => {
         console.log("result from subscribe opponentEndedTurn: " + message);
@@ -132,18 +129,27 @@ export class HomeComponent implements OnInit {
 
   processClickedCell(rowNum: number, colNum: number) {
     console.log('clicked rowNum=' + rowNum + ', colNum=', colNum, 'previouslyClickedCard=', this.previouslyClickedCard);
-    if (this.previouslyClickedCard && !this.activeGame.board[rowNum][colNum].card && this.activeGame.currentTurn && rowNum >= this.activeGame.board.length - 1) {
+    
+    if (this.previouslyClickedCard 
+      && !this.activeGame.board[rowNum][colNum].card 
+      && this.activeGame.currentTurn 
+      && rowNum >= this.activeGame.board.length - 1
+      && this.activeGame.energy - this.previouslyClickedCard.cost >= 0
+      && this.activeGame.status === 'IN_PROGRESS') {
+
       this.activeGame.board[rowNum][colNum].card = this.previouslyClickedCard;
       let usedCardIndex = this.activeGame.cards.indexOf(this.previouslyClickedCard);
 
-      this.gameService.putCardOnBoard(this.activeGame.id, this.activeGame.username, rowNum, colNum, this.previouslyClickedCard)
+      this.gameService
+        .putCardOnBoard(this.activeGame.id, this.activeGame.username, rowNum, colNum, this.previouslyClickedCard)
         .subscribe(game => {
           this.activeGame = game;
-          this.gameService.drawCard(this.activeGame.id, this.activeGame.username, usedCardIndex).subscribe(card => {
-            console.log('drew new card: ', card);
-            card.justDrew = true;
-            this.activeGame.cards.splice(usedCardIndex, 1, card);
-          });
+          this.gameService.drawCard(this.activeGame.id, this.activeGame.username, usedCardIndex)
+            .subscribe(card => {
+              console.log('drew new card: ', card);
+              card.justDrew = true;
+              this.activeGame.cards.splice(usedCardIndex, 1, card);
+            });
         });
 
       this.previouslyClickedCard = null;
