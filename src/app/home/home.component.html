@@ -38,7 +38,6 @@
                     [ngClass]="[(activeGame.currentTurn && (rowNum >= activeGame.board.length-1)) ? 'playable' : '', (activeGame.board[rowNum][colNum].card && activeGame.board[rowNum][colNum].card.owner === activeGame.username) ? 'mine' : 'notmine']">
                   <p *ngIf="activeGame.board[rowNum][colNum].card">{{activeGame.board[rowNum][colNum].card.type}}</p>
                   <p *ngIf="activeGame.board[rowNum][colNum].card">Might: {{activeGame.board[rowNum][colNum].card.might}}</p>
-                  <p *ngIf="activeGame.board[rowNum][colNum].card">Movement: {{activeGame.board[rowNum][colNum].card.movement}}</p>
                 </td>
               </tr>
           </table>
@@ -48,7 +47,6 @@
               <p>{{card.type}}</p>
               <p>Cost: {{card.cost}}</p>
               <p>Might: {{card.might}}</p>
-              <p>Movement: {{card.movement}}</p>
             </div>            
           </div>
 

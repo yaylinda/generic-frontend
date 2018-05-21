@@ -6,4 +6,5 @@ export interface Card {
     cost: number;
     clicked: boolean;
     justDrew: boolean;
+    numTurnsOnBoard: number;
 }

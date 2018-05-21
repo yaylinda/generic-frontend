@@ -80,6 +80,20 @@ export class HomeComponent implements OnInit {
           });
         }
       });
+
+      that.stompClient.subscribe("/topic/player2Joined/" + that.currentUser.username, (message) => {
+        console.log("result from subscribe player2Joined: " + message);
+        if(message.body) {
+          that.gameService.getGameByGameIdAndUsername(message.body, that.currentUser.username).subscribe(game => {
+            console.log('result from getGameByGameIdAndUsername:', game)
+            that.activeGame = game;
+          });
+          that.gameService.getGamesForUser(that.currentUser.username).subscribe(games => {
+            console.log('result from getGamesForUser (after player 2 joined):', games)
+            that.games = games;
+          });
+        }
+      });
     });
   }
 
@@ -95,18 +109,13 @@ export class HomeComponent implements OnInit {
   }
 
   endTurn() {
-    console.log('submit turn pressed');
-    if (this.activeGame.currentTurn) {
-      this.gameService.endTurn(this.activeGame.id, this.activeGame.username).subscribe(game => {
-        console.log("END TURN result from game service: ", game);
-        this.activeGame = game;
-        this.gameService.getGamesForUser(this.currentUser.username).subscribe(games => {
-          this.games = games;
-        });
+    this.gameService.endTurn(this.activeGame.id, this.activeGame.username).subscribe(game => {
+      console.log("END TURN result from game service: ", game);
+      this.activeGame = game;
+      this.gameService.getGamesForUser(this.currentUser.username).subscribe(games => {
+        this.games = games;
       });
-    } else {
-      console.log("it is not your turn, so you can't end it");
-    }
+    });
   }
 
   setActiveGame(game: Game) {
@@ -135,7 +144,7 @@ export class HomeComponent implements OnInit {
       && this.activeGame.currentTurn 
       && rowNum >= this.activeGame.board.length - 1
       && this.activeGame.energy - this.previouslyClickedCard.cost >= 0
-      && this.activeGame.status === 'IN_PROGRESS') {
+      && this.activeGame.status === 'IN_PROGRESS' || this.activeGame.status === 'WAITING_PLAYER_2') {
 
       this.activeGame.board[rowNum][colNum].card = this.previouslyClickedCard;
       let usedCardIndex = this.activeGame.cards.indexOf(this.previouslyClickedCard);
