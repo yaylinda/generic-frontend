@@ -26,6 +26,7 @@ export class HomeComponent implements OnInit {
   isAuthenticated: boolean;
   currentUser: User;
   games: Game[] = [];
+  completedGames: Game[] = [];
   activeGame: Game;
   previouslyClickedCard: Card;
   inGameMode: boolean = false;
@@ -39,7 +40,13 @@ export class HomeComponent implements OnInit {
           this.currentUser = this.userService.getCurrentUser();
           this.gameService.getGamesForUser(this.currentUser.username).subscribe(data => {
             console.log("GET GAMES result from game service: ", data);
-            this.games = data;
+            data.forEach(g => {
+              if (g.status === 'COMPLETED') {
+                this.completedGames.push(g);
+              } else {
+                this.games.push(g);
+              }
+            })
             if (this.games.length > 0) {
               this.activeGame = this.games[0];
             }
@@ -109,13 +116,15 @@ export class HomeComponent implements OnInit {
   }
 
   endTurn() {
-    this.gameService.endTurn(this.activeGame.id, this.activeGame.username).subscribe(game => {
-      console.log("END TURN result from game service: ", game);
-      this.activeGame = game;
-      this.gameService.getGamesForUser(this.currentUser.username).subscribe(games => {
-        this.games = games;
+    if (this.activeGame.currentTurn && this.activeGame.status !== 'COMPLETED') {
+      this.gameService.endTurn(this.activeGame.id, this.activeGame.username).subscribe(game => {
+        console.log("END TURN result from game service: ", game);
+        this.activeGame = game;
+        this.gameService.getGamesForUser(this.currentUser.username).subscribe(games => {
+          this.games = games;
+        });
       });
-    });
+    }
   }
 
   setActiveGame(game: Game) {

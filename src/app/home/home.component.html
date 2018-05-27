@@ -69,6 +69,15 @@
           </ul>
 
           <button *ngIf="!activeGame" (click)="startGame()">Start New War</button>
+          
+          <hr/>
+
+          <h3>Your Completed Wars [{{completedGames.length}}]</h3>
+          <ul class="games-list" *ngIf="completedGames">
+              <li *ngFor="let game of completedGames">
+                  {{ game.username }} vs. {{ game.opponentName }} - {{ game.points }} vs {{ game.opponentPoints }}
+              </li>
+            </ul>
       </div>
     </div>
 
