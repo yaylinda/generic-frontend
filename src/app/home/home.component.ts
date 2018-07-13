@@ -54,7 +54,7 @@ export class HomeComponent implements OnInit {
           });
         }
       });
-    this.initializeWebSocketConnection();      
+    this.initializeWebSocketConnection();
   }
 
   initializeWebSocketConnection() {
@@ -151,7 +151,7 @@ export class HomeComponent implements OnInit {
     if (this.previouslyClickedCard 
       && !this.activeGame.board[rowNum][colNum].card 
       && this.activeGame.currentTurn 
-      && rowNum >= this.activeGame.board.length - 1
+      && this.isPutCardAllowed(rowNum, this.previouslyClickedCard)
       && this.activeGame.energy - this.previouslyClickedCard.cost >= 0
       && this.activeGame.status === 'IN_PROGRESS' || this.activeGame.status === 'WAITING_PLAYER_2') {
 
@@ -172,6 +172,15 @@ export class HomeComponent implements OnInit {
 
       this.previouslyClickedCard = null;
     }
+  }
+
+  isPutCardAllowed(rowNum: number, cardToPut: Card): boolean {
+    if (cardToPut.type === 'WALL') {
+      return (rowNum >= this.activeGame.board.length - 1)
+    } else if (cardToPut.type ==='TROOP') {
+      return (rowNum >= this.activeGame.board.length - 2)
+    }
+    return false;
   }
 
 }
