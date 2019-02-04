@@ -11,43 +11,43 @@ export class GameService {
 
   constructor(private apiService: ApiService) { }
 
-  getGamesForUser(username: string): Observable<Game[]> {
-    return this.apiService.get('/game/' + username).pipe(map(data => {
+  getGames(sessionToken: string): Observable<Game[]> {
+    return this.apiService.get('/games', sessionToken).pipe(map(data => {
         return data;
     }));
   }
 
-  startGame(username: string): Observable<Game> {
-    return this.apiService.get('/game/start/' + username).pipe(map(data =>{
+  startGame(sessionToken: string): Observable<Game> {
+    return this.apiService.get('/games/start', sessionToken).pipe(map(data => {
       return data;
     }));
   }
 
-  endTurn(gameId: string, username: string): Observable<Game> {
-    return this.apiService.get('/game/endTurn/' + gameId + '/' + username).pipe(map(data => {
+  endTurn(gameId: string, sessionToken: string): Observable<Game> {
+    return this.apiService.get('/games/endTurn/' + gameId, sessionToken).pipe(map(data => {
       return data;
     }));
   }
 
-  getGameByGameIdAndUsername(gameId: string, username: string): Observable<Game> {
-    return this.apiService.get('/game/' + gameId + '/' + username).pipe(map(data => {
+  getGameByGameId(gameId: string, sessionToken: string): Observable<Game> {
+    return this.apiService.get('/games/' + gameId, sessionToken).pipe(map(data => {
       return data;
     }));
   }
 
-  putCardOnBoard(gameId: string, username: string, rowNum: number, colNum: number, card: Card): Observable<Game> {
+  putCardOnBoard(gameId: string, sessionToken: string, rowNum: number, colNum: number, card: Card): Observable<Game> {
     let putCardDTO = {
       'row': rowNum,
       'col': colNum,
       'card': card
     };
-    return this.apiService.put('/game/putCard/' + gameId + '/' + username, putCardDTO).pipe(map(data => {
+    return this.apiService.put('/games/putCard/' + gameId, putCardDTO, sessionToken).pipe(map(data => {
       return data;
     }));
   }
 
-  drawCard(gameId: string, username: string, usedCardIndex: number): Observable<Card> {
-    return this.apiService.get('/game/card/' + gameId + '/' + username + '/' + usedCardIndex).pipe(map(data => {
+  drawCard(gameId: string, sessionToken: string, usedCardIndex: number): Observable<Card> {
+    return this.apiService.get('/games/card/' + gameId + '/' + usedCardIndex, sessionToken).pipe(map(data => {
       return data;
     }))
   }

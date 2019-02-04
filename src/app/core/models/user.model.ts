@@ -1,5 +1,4 @@
 export interface User {
-  email: string;
-  token: string;
+  sessionToken: string;
   username: string;
 }

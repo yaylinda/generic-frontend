@@ -6,6 +6,26 @@
   cursor:pointer;
 }
 
+mat-list-item {
+  cursor: pointer;
+}
+
+.color-green {
+  color: #00FF00;
+}
+
+.color-red { 
+  color: red; 
+}
+
+.cell {
+  background-color: lightcyan;
+}
+
+.hand-card {
+  
+}
+
 table {
   border: 2px solid greenyellow;
   border-radius: 10px;

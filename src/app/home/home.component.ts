@@ -7,6 +7,7 @@ import { GameService } from '../core/services/game.service';
 import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 import { Card } from '../core/models/card.model';
+import { Cell } from '../core/models/cell.model';
 
 @Component({
   selector: 'app-home-page',
@@ -23,13 +24,18 @@ export class HomeComponent implements OnInit {
 
   numRows: number[] = [0,1,2,3,4];
   numCols: number[] = [0,1,2,3];
+
   isAuthenticated: boolean;
   currentUser: User;
+
   games: Game[] = [];
   completedGames: Game[] = [];
   activeGame: Game;
+  activeGameCells: Cell[];
+
   previouslyClickedCard: Card;
   inGameMode: boolean = false;
+
   stompClient;
 
   ngOnInit() {
@@ -38,7 +44,7 @@ export class HomeComponent implements OnInit {
         if (authenticated) {
           console.log(authenticated);
           this.currentUser = this.userService.getCurrentUser();
-          this.gameService.getGamesForUser(this.currentUser.username).subscribe(data => {
+          this.gameService.getGames(this.currentUser.sessionToken).subscribe(data => {
             console.log("GET GAMES result from game service: ", data);
             data.forEach(g => {
               if (g.status === 'COMPLETED') {
@@ -47,14 +53,10 @@ export class HomeComponent implements OnInit {
                 this.games.push(g);
               }
             })
-            if (this.games.length > 0) {
-              this.activeGame = this.games[0];
-            }
-            console.log("ACTIVE GAME: ", this.activeGame);
           });
+          this.initializeWebSocketConnection();
         }
       });
-    this.initializeWebSocketConnection();
   }
 
   initializeWebSocketConnection() {
@@ -67,12 +69,12 @@ export class HomeComponent implements OnInit {
       that.stompClient.subscribe("/topic/opponentEndedTurn/" + that.currentUser.username, (message) => {
         console.log("result from subscribe opponentEndedTurn: " + message);
         if(message.body) {
-          that.gameService.getGameByGameIdAndUsername(message.body, that.currentUser.username).subscribe(game => {
-            console.log('result from getGameByGameIdAndUsername:', game)
+          that.gameService.getGameByGameId(message.body, that.currentUser.sessionToken).subscribe(game => {
+            console.log('result from getGameByGameId:', game)
             that.activeGame = game;
           });
-          that.gameService.getGamesForUser(that.currentUser.username).subscribe(games => {
-            console.log('result from getGamesForUser (after getting message):', games)
+          that.gameService.getGames(that.currentUser.sessionToken).subscribe(games => {
+            console.log('result from getGames (after getting message):', games)
             that.games = games;
           });
         }
@@ -81,8 +83,8 @@ export class HomeComponent implements OnInit {
       that.stompClient.subscribe("/topic/opponentPutCard/" + that.currentUser.username, (message) => {
         console.log("result from subscribe opponentPutCard: " + message);
         if(message.body) {
-          that.gameService.getGameByGameIdAndUsername(message.body, that.currentUser.username).subscribe(game => {
-            console.log('result from getGameByGameIdAndUsername:', game)
+          that.gameService.getGameByGameId(message.body, that.currentUser.sessionToken).subscribe(game => {
+            console.log('result from getGameByGameId:', game)
             that.activeGame = game;
           });
         }
@@ -91,11 +93,11 @@ export class HomeComponent implements OnInit {
       that.stompClient.subscribe("/topic/player2Joined/" + that.currentUser.username, (message) => {
         console.log("result from subscribe player2Joined: " + message);
         if(message.body) {
-          that.gameService.getGameByGameIdAndUsername(message.body, that.currentUser.username).subscribe(game => {
-            console.log('result from getGameByGameIdAndUsername:', game)
+          that.gameService.getGameByGameId(message.body, that.currentUser.sessionToken).subscribe(game => {
+            console.log('result from getGameByGameId:', game)
             that.activeGame = game;
           });
-          that.gameService.getGamesForUser(that.currentUser.username).subscribe(games => {
+          that.gameService.getGames(that.currentUser.sessionToken).subscribe(games => {
             console.log('result from getGamesForUser (after player 2 joined):', games)
             that.games = games;
           });
@@ -104,12 +106,42 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  handleClickedGame(gameIndex: number) {
+    this.inGameMode = true;
+    this.activeGame = this.games[gameIndex];
+    console.log(this.activeGame);
+    this.activeGameCells = [];
+    for (let i = 0; i < this.activeGame.board.length; i++) {
+      this.activeGameCells = this.activeGameCells.concat(this.activeGame.board[i]);
+    }
+    console.log(this.activeGameCells);
+  }
+
+  handleClickedBack() {
+    this.inGameMode = false;
+    this.activeGame = null;
+    this.activeGameCells = [];
+    this.games = [];
+    this.completedGames = [];
+
+    this.gameService.getGames(this.currentUser.sessionToken).subscribe(data => {
+      console.log("GET GAMES result from game service: ", data);
+      data.forEach(g => {
+        if (g.status === 'COMPLETED') {
+          this.completedGames.push(g);
+        } else {
+          this.games.push(g);
+        }
+      })
+    });
+  }
+
   startGame() {
     console.log('start game pressed');
-    this.gameService.startGame(this.currentUser.username).subscribe(newGame => {
+    this.gameService.startGame(this.currentUser.sessionToken).subscribe(newGame => {
       console.log("START GAME result from game service: ", newGame);
       this.activeGame = newGame;
-      this.gameService.getGamesForUser(this.currentUser.username).subscribe(games => {
+      this.gameService.getGames(this.currentUser.sessionToken).subscribe(games => {
         this.games = games;
       });
     });
@@ -117,10 +149,10 @@ export class HomeComponent implements OnInit {
 
   endTurn() {
     if (this.activeGame.currentTurn && this.activeGame.status !== 'COMPLETED') {
-      this.gameService.endTurn(this.activeGame.id, this.activeGame.username).subscribe(game => {
+      this.gameService.endTurn(this.activeGame.id, this.currentUser.sessionToken).subscribe(game => {
         console.log("END TURN result from game service: ", game);
         this.activeGame = game;
-        this.gameService.getGamesForUser(this.currentUser.username).subscribe(games => {
+        this.gameService.getGames(this.currentUser.sessionToken).subscribe(games => {
           this.games = games;
         });
       });
@@ -159,10 +191,10 @@ export class HomeComponent implements OnInit {
       let usedCardIndex = this.activeGame.cards.indexOf(this.previouslyClickedCard);
 
       this.gameService
-        .putCardOnBoard(this.activeGame.id, this.activeGame.username, rowNum, colNum, this.previouslyClickedCard)
+        .putCardOnBoard(this.activeGame.id, this.currentUser.sessionToken, rowNum, colNum, this.previouslyClickedCard)
         .subscribe(game => {
           this.activeGame = game;
-          this.gameService.drawCard(this.activeGame.id, this.activeGame.username, usedCardIndex)
+          this.gameService.drawCard(this.activeGame.id, this.currentUser.sessionToken, usedCardIndex)
             .subscribe(card => {
               console.log('drew new card: ', card);
               card.justDrew = true;

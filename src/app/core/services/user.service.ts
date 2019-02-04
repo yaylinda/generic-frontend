@@ -10,7 +10,6 @@ import { User } from '../models';
 import { map } from 'rxjs/operators/map';
 import { distinctUntilChanged } from 'rxjs/operators/distinctUntilChanged';
 
-
 @Injectable()
 export class UserService {
   private currentUserSubject = new BehaviorSubject<User>({} as User);
@@ -30,7 +29,7 @@ export class UserService {
   populate() {
     // If JWT detected, attempt to get & store user's info
     if (this.jwtService.getToken()) {
-      this.apiService.get('/user/' + this.jwtService.getToken())
+      this.apiService.get('/users/' + this.jwtService.getToken())
         .subscribe(
           data => this.setAuth(data),
           err => this.purgeAuth()
@@ -44,7 +43,7 @@ export class UserService {
   setAuth(user: User) {
     console.log("setAuth user:", user);
     // Save JWT sent from server in localstorage
-    this.jwtService.saveToken(user.token);
+    this.jwtService.saveToken(user.sessionToken);
     // Set current user data into observable
     this.currentUserSubject.next(user);
     // Set isAuthenticated to true
@@ -61,9 +60,9 @@ export class UserService {
   }
 
   attemptAuth(type, credentials): Observable<User> {
-    const route = (type === 'login') ? '/login' : '/';
+    const route = (type === 'login') ? '/login' : '/register';
     console.log(credentials);
-    return this.apiService.post('/user' + route, credentials)
+    return this.apiService.post('/users' + route, credentials)
       .pipe(map(
       data => {
         console.log("response: ", data);

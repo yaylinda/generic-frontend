@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     this.apiService
-      .post('/user/logout/' + this.currentUser.token)
+      .post('/user/logout', this.currentUser.sessionToken)
       .subscribe(() => {
         console.log('logged out');
       })

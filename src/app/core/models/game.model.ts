@@ -15,4 +15,10 @@ export interface Game {
     status: string;
     cards: Card[];
     numCardsPlayed: number;
+    numTurns: number;
+    numRows: number;
+    numCols: number;
+    createdDate: string;
+    player2JoinDate: string;
+    completedDate: string;
 }

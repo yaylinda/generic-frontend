@@ -19,8 +19,7 @@
 
     <!-- Logged in content -->
     <div class="row" *appShowAuthed="true">
-
-      <div id="main-panel" class="col-md-9 panel">
+      <!-- <div id="main-panel" class="col-md-9 panel">
 
         <div *ngIf="activeGame">
 
@@ -32,7 +31,7 @@
             <p *ngIf="!activeGame.currentTurn && activeGame.status === 'IN_PROGRESS'">Status: Opponent's Turn</p>
             <p *ngIf="activeGame.status === 'COMPLETED'">Status: Game Over.</p>
 
-            <p>Energy: {{activeGame.energy}} || My Points: {{activeGame.points}} || Opponent's Points: {{activeGame.opponentPoints}} || Cards Played: {{activeGame.numCardsPlayed}}</p>
+            <p>Energy: {{activeGame.energy}} || My Points: {{activeGame.points}} || Opponent's Points: {{activeGame.opponentPoints}} || Turns: {{activeGame.numTurns}} || Cards Played: {{activeGame.numCardsPlayed}}</p>
           </div>
 
           <table>
@@ -67,7 +66,7 @@
   
           <ul class="games-list" *ngIf="games">
             <li *ngFor="let game of games" (click)="setActiveGame(game)">
-                {{ game.status }} - {{ game.username }} vs. {{ game.opponentName }} - myTurn:{{ game.currentTurn }}
+                {{ game.status }} - {{ game.username }} vs. {{ game.opponentName }}
             </li>
           </ul>
 
@@ -78,9 +77,43 @@
           <h3>Your Completed Wars [{{completedGames.length}}]</h3>
           <ul class="games-list" *ngIf="completedGames">
               <li *ngFor="let game of completedGames">
-                  {{ game.username }} vs. {{ game.opponentName }} - {{ game.points }} vs {{ game.opponentPoints }}
+                  {{ game.username }} vs. {{ game.opponentName }} - {{ game.points }} to {{ game.opponentPoints }}
               </li>
             </ul>
+      </div> -->
+
+      <div *ngIf="!inGameMode">
+        <mat-list>
+            <mat-list-item *ngFor="let game of games; let i = index;" (click)="handleClickedGame(i)">
+              <mat-icon *ngIf="game.currentTurn" class="color-green" matListIcon>stay_current_landscape</mat-icon>
+              <mat-icon *ngIf="!game.currentTurn" class="color-red" matListIcon>stay_current_landscape</mat-icon>
+              <h3 matLine>Simple War against {{game.opponentName}}</h3>
+              <h4 matLine>Status: {{game.status}}</h4>
+              <p matLine>Score: {{game.points}} vs. {{game.opponentPoints}}</p>
+            </mat-list-item>
+          </mat-list>
+      </div>
+
+      <div *ngIf="inGameMode">
+        <button (click)="handleClickedBack()">Back to Games List</button>
+        <mat-grid-list [cols]="activeGame.numCols">
+          <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells">
+            <div *ngIf="cell.card">
+                <mat-grid-tile-header>{{cell.card.type}}</mat-grid-tile-header>
+                <mat-grid-tile-footer>{{cell.card.might}}</mat-grid-tile-footer>
+            </div>
+          </mat-grid-tile>
+        </mat-grid-list>
+
+        <mat-grid-list [cols]="activeGame.cards.length">
+            <mat-grid-tile *ngFor="let card of activeGame.cards" matBadge="card.cost">
+                <mat-grid-tile-header>{{card.type}}</mat-grid-tile-header>
+                <mat-grid-tile-footer>{{might}}</mat-grid-tile-footer>
+            </mat-grid-tile>
+          </mat-grid-list>
+
+        <button (click)="">End Turn</button>
+        <button (click)="">Discard Hand and End Turn</button>
       </div>
     </div>
 
@@ -88,5 +121,6 @@
     <div class="row" *appShowAuthed="false">
       Log in or register to see more content :)
     </div>
+
   </div>
 </div>
