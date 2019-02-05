@@ -117,14 +117,15 @@
         <!-- Game Board -->
         <mat-grid-list [cols]="activeGame.numCols">
           <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells; let i = index;" (click)="handleClickedCell(i)">
-              <mat-grid-tile-header *ngIf="cell.card">{{cell.card.type}}</mat-grid-tile-header>
-              <mat-grid-tile-footer *ngIf="cell.card">{{cell.card.might}}</mat-grid-tile-footer>
+              <!-- <mat-grid-tile-header *ngIf="cell.card">{{cell.card.type}}</mat-grid-tile-header>
+              <mat-grid-tile-footer *ngIf="cell.card">{{cell.card.might}}</mat-grid-tile-footer> -->
+              <button *ngIf="cell.state==='OCCUPIED'" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
           </mat-grid-tile>
         </mat-grid-list>
         <br/>
 
         <!-- Cards in Hand -->
-        <button *ngFor="let card of activeGame.cards; let i = index;" [matBadge]="card.cost" (click)="handleClickedCard(card, i)" mat-fab>
+        <button *ngFor="let card of activeGame.cards; let i = index;" [matBadge]="card.cost" matBadgePosition="below after" (click)="handleClickedCard(card, i)" mat-fab>
           {{card.type}}
         </button>
         <br/><br/>
