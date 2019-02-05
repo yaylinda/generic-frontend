@@ -10,6 +10,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatButtonModule} from '@angular/material/button';
 import {MatBadgeModule} from '@angular/material/badge';
+import {MatDividerModule} from '@angular/material/divider';
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import {MatBadgeModule} from '@angular/material/badge';
     MatIconModule,
     MatGridListModule,
     MatButtonModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatDividerModule
   ],
   declarations: [
     HomeComponent

@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { ApiService } from './api.service';
 import { Game, StartGameResponse } from '../models';
-import { Observable } from 'rxjs/Observable';
-import { map } from 'rxjs/operators/map';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Card } from '../models/card.model';
 
 @Injectable()

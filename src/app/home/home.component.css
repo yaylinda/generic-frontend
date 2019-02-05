@@ -22,8 +22,12 @@ mat-list-item {
   background-color: lightcyan;
 }
 
-.hand-card {
-  
+.content-center {
+  margin: 0 auto;
+}
+
+.fill-width-btn {
+  width: 100%;
 }
 
 table {

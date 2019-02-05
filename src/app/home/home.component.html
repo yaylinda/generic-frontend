@@ -4,14 +4,6 @@
     <div class="container">
       <h1 class="logo-font">Simple War</h1>
       <p>Play a friendly game of Simple War!</p>
-      <p *appShowAuthed="true">Welcome {{currentUser.username}}!</p>
-    </div>
-  </div>
-
-  <div class="banner" *appShowAuthed="true">
-    <div class="container">
-      <h1 class="logo-font">Simple War</h1>
-      <p *appShowAuthed="true">Welcome {{currentUser.username}}!</p>
     </div>
   </div>
 
@@ -82,8 +74,10 @@
             </ul>
       </div> -->
 
-      <div *ngIf="!inGameMode">
+      <!-- Game List -->
+      <div *ngIf="!inGameMode" class="content-center">
         <mat-list>
+            <mat-divider></mat-divider>
             <mat-list-item *ngFor="let game of games; let i = index;" (click)="handleClickedGame(i)">
               <mat-icon *ngIf="game.currentTurn" class="color-green" matListIcon>stay_current_landscape</mat-icon>
               <mat-icon *ngIf="!game.currentTurn" class="color-red" matListIcon>stay_current_landscape</mat-icon>
@@ -91,29 +85,37 @@
               <h4 matLine>Status: {{game.status}}</h4>
               <p matLine>Score: {{game.points}} vs. {{game.opponentPoints}}</p>
             </mat-list-item>
+            <mat-divider></mat-divider>
           </mat-list>
       </div>
 
-      <div *ngIf="inGameMode">
-        <button (click)="handleClickedBack()">Back to Games List</button>
+      <!-- One Game -->
+      <div *ngIf="inGameMode" class="content-center">
+
+        <!-- Back Button -->
+        <button (click)="handleClickedBack()" class="fill-width-btn" mat-raised-button>Back to Games List</button>
+        <br/><br/>
+
+        <!-- Game Board -->
         <mat-grid-list [cols]="activeGame.numCols">
           <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells">
-            <div *ngIf="cell.card">
-                <mat-grid-tile-header>{{cell.card.type}}</mat-grid-tile-header>
-                <mat-grid-tile-footer>{{cell.card.might}}</mat-grid-tile-footer>
-            </div>
+              <mat-grid-tile-header *ngIf="cell.card">{{cell.card.type}}</mat-grid-tile-header>
+              <mat-grid-tile-footer *ngIf="cell.card">{{cell.card.might}}</mat-grid-tile-footer>
           </mat-grid-tile>
         </mat-grid-list>
+        <br/>
 
-        <mat-grid-list [cols]="activeGame.cards.length">
-            <mat-grid-tile *ngFor="let card of activeGame.cards" matBadge="card.cost">
-                <mat-grid-tile-header>{{card.type}}</mat-grid-tile-header>
-                <mat-grid-tile-footer>{{might}}</mat-grid-tile-footer>
-            </mat-grid-tile>
-          </mat-grid-list>
+        <!-- Cards in Hand -->
+        <button *ngFor="let card of activeGame.cards" [matBadge]="card.cost" (click)="handleClickedCard(card)" mat-fab>
+          {{card.type}}
+        </button>
+        <br/><br/>
 
-        <button (click)="">End Turn</button>
-        <button (click)="">Discard Hand and End Turn</button>
+        <!-- End Turn / Discard Hand Buttons -->
+        <button (click)="endTurn()" class="fill-width-btn" mat-raised-button>End Turn</button>
+        <br/><br/>
+        <button (click)="discardHandAndEndTurn()" class="fill-width-btn" mat-raised-button>Discard Hand and End Turn</button>
+
       </div>
     </div>
 

@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpHeaders, HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
-import { catchError } from 'rxjs/operators/catchError';
+import { HttpClient } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable()
 export class ApiService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient ) {}
 
   get(
     path: string, 
@@ -73,6 +72,6 @@ export class ApiService {
 
   private formatErrors(error: any) {
     console.log(error);
-    return new ErrorObservable(error.error);
+    return throwError(error.error);
   }
 }

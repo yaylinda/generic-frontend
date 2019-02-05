@@ -164,7 +164,7 @@ export class HomeComponent implements OnInit {
     console.log('updated active game: ', this.activeGame);
   }
 
-  processClickedCard(card: Card) {
+  handleClickedCard(card: Card) {
     console.log('clicked card: ', card);
     if (this.previouslyClickedCard && this.previouslyClickedCard != card) {
       this.previouslyClickedCard.clicked = false;
