@@ -1,4 +1,3 @@
-import { GameBoard } from './gameboard.model';
 import { Cell } from './cell.model';
 import { Card } from './card.model';
 
@@ -20,5 +19,6 @@ export interface Game {
     numCols: number;
     createdDate: string;
     player2JoinDate: string;
+    lastModifiedDate: string;
     completedDate: string;
 }

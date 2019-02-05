@@ -76,17 +76,19 @@
 
       <!-- Game List -->
       <div *ngIf="!inGameMode" class="content-center">
+        <mat-divider></mat-divider>
         <mat-list>
-            <mat-divider></mat-divider>
-            <mat-list-item *ngFor="let game of games; let i = index;" (click)="handleClickedGame(i)">
-              <mat-icon *ngIf="game.currentTurn" class="color-green" matListIcon>stay_current_landscape</mat-icon>
-              <mat-icon *ngIf="!game.currentTurn" class="color-red" matListIcon>stay_current_landscape</mat-icon>
-              <h3 matLine>Simple War against {{game.opponentName}}</h3>
-              <h4 matLine>Status: {{game.status}}</h4>
-              <p matLine>Score: {{game.points}} vs. {{game.opponentPoints}}</p>
-            </mat-list-item>
-            <mat-divider></mat-divider>
-          </mat-list>
+          <mat-list-item *ngFor="let game of games; let i = index;" (click)="handleClickedGame(i)">
+            <mat-icon *ngIf="game.currentTurn" class="color-green" matListIcon>stay_current_landscape</mat-icon>
+            <mat-icon *ngIf="!game.currentTurn" class="color-red" matListIcon>stay_current_landscape</mat-icon>
+            <h3 matLine>Simple War against {{game.opponentName}}</h3>
+            <p matLine>Score: {{game.points}} vs. {{game.opponentPoints}}</p>
+          </mat-list-item>
+        </mat-list>
+        <p *ngIf="games.length === 0">You have no active Simple Wars. Start a new one!</p>
+        <mat-divider></mat-divider>
+        <br/>
+        <button (click)="startGame()" class="fill-width-btn" color="primary" mat-raised-button>Start new Simple War</button>
       </div>
 
       <!-- One Game -->
@@ -96,9 +98,25 @@
         <button (click)="handleClickedBack()" class="fill-width-btn" mat-raised-button>Back to Games List</button>
         <br/><br/>
 
+        <!-- Game Stats -->
+        <mat-chip-list>
+          <mat-chip>Opponent: {{activeGame.opponentName}}</mat-chip>
+          <mat-chip>Status: {{activeGame.status}}</mat-chip> 
+          <mat-chip>Score: {{activeGame.points}} vs. {{activeGame.opponentPoints}}</mat-chip>
+          <mat-chip>My Turn: {{activeGame.currentTurn}}</mat-chip>
+          <mat-chip>Energy: {{activeGame.energy}}</mat-chip>
+          <mat-chip>Number of Cards Played: {{activeGame.numCardsPlayed}}</mat-chip>
+          <mat-chip>Number of Turns: {{activeGame.numTurns}}</mat-chip>
+          <mat-chip>Created: {{activeGame.createdDate}}</mat-chip>
+          <mat-chip>Player2 Joined : {{activeGame.player2JoinDate}}</mat-chip>
+          <mat-chip>Last Modified: {{activeGame.lastModifiedDate}}</mat-chip>
+          <mat-chip>Completed: {{activeGame.completedDate}}</mat-chip>
+        </mat-chip-list>
+        <br/><br/>
+
         <!-- Game Board -->
         <mat-grid-list [cols]="activeGame.numCols">
-          <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells">
+          <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells; let i = index;" (click)="handleClickedCell(i)">
               <mat-grid-tile-header *ngIf="cell.card">{{cell.card.type}}</mat-grid-tile-header>
               <mat-grid-tile-footer *ngIf="cell.card">{{cell.card.might}}</mat-grid-tile-footer>
           </mat-grid-tile>
@@ -106,15 +124,15 @@
         <br/>
 
         <!-- Cards in Hand -->
-        <button *ngFor="let card of activeGame.cards" [matBadge]="card.cost" (click)="handleClickedCard(card)" mat-fab>
+        <button *ngFor="let card of activeGame.cards; let i = index;" [matBadge]="card.cost" (click)="handleClickedCard(card, i)" mat-fab>
           {{card.type}}
         </button>
         <br/><br/>
 
         <!-- End Turn / Discard Hand Buttons -->
-        <button (click)="endTurn()" class="fill-width-btn" mat-raised-button>End Turn</button>
+        <button *ngIf="activeGame.currentTurn" (click)="endTurn()" class="fill-width-btn" mat-raised-button>End Turn</button>
         <br/><br/>
-        <button (click)="discardHandAndEndTurn()" class="fill-width-btn" mat-raised-button>Discard Hand and End Turn</button>
+        <button *ngIf="activeGame.currentTurn" (click)="discardHandAndEndTurn()" class="fill-width-btn" mat-raised-button>Discard Hand and End Turn</button>
 
       </div>
     </div>

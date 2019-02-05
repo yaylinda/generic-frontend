@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 
 import { ApiService } from './api.service';
-import { Game, StartGameResponse } from '../models';
+import { Game } from '../models';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Card } from '../models/card.model';
+import { PutCardResponse } from '../models/putcardresponse.model';
 
 @Injectable()
 export class GameService {
@@ -35,20 +36,15 @@ export class GameService {
     }));
   }
 
-  putCardOnBoard(gameId: string, sessionToken: string, rowNum: number, colNum: number, card: Card): Observable<Game> {
+  putCardOnBoard(gameId: string, sessionToken: string, rowNum: number, colNum: number, card: Card, index: number): Observable<PutCardResponse> {
     let putCardDTO = {
       'row': rowNum,
       'col': colNum,
+      'cardIndex': index, 
       'card': card
     };
     return this.apiService.put('/games/putCard/' + gameId, putCardDTO, sessionToken).pipe(map(data => {
       return data;
     }));
-  }
-
-  drawCard(gameId: string, sessionToken: string, usedCardIndex: number): Observable<Card> {
-    return this.apiService.get('/games/card/' + gameId + '/' + usedCardIndex, sessionToken).pipe(map(data => {
-      return data;
-    }))
   }
 }

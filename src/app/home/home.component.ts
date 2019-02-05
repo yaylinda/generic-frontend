@@ -8,6 +8,7 @@ import * as Stomp from 'stompjs';
 import * as SockJS from 'sockjs-client';
 import { Card } from '../core/models/card.model';
 import { Cell } from '../core/models/cell.model';
+import {MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-home-page',
@@ -19,7 +20,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private router: Router,
     private userService: UserService,
-    private gameService: GameService
+    private gameService: GameService,
+    private snackBar: MatSnackBar
   ) { }
 
   numRows: number[] = [0,1,2,3,4];
@@ -34,6 +36,8 @@ export class HomeComponent implements OnInit {
   activeGameCells: Cell[];
 
   previouslyClickedCard: Card;
+  previouslyClickedCardIndex: number;
+
   inGameMode: boolean = false;
 
   stompClient;
@@ -106,6 +110,15 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  startGame() {
+    console.log('start game pressed');
+    this.gameService.startGame(this.currentUser.sessionToken).subscribe(newGame => {
+      console.log("START GAME result from game service: ", newGame);
+      this.activeGame = newGame;
+      this.inGameMode = true;
+    });
+  }
+
   handleClickedGame(gameIndex: number) {
     this.inGameMode = true;
     this.activeGame = this.games[gameIndex];
@@ -136,17 +149,6 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  startGame() {
-    console.log('start game pressed');
-    this.gameService.startGame(this.currentUser.sessionToken).subscribe(newGame => {
-      console.log("START GAME result from game service: ", newGame);
-      this.activeGame = newGame;
-      this.gameService.getGames(this.currentUser.sessionToken).subscribe(games => {
-        this.games = games;
-      });
-    });
-  }
-
   endTurn() {
     if (this.activeGame.currentTurn && this.activeGame.status !== 'COMPLETED') {
       this.gameService.endTurn(this.activeGame.id, this.currentUser.sessionToken).subscribe(game => {
@@ -159,60 +161,37 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  setActiveGame(game: Game) {
-    this.activeGame = game;
-    console.log('updated active game: ', this.activeGame);
-  }
-
-  handleClickedCard(card: Card) {
+  handleClickedCard(card: Card, index: number) {
     console.log('clicked card: ', card);
-    if (this.previouslyClickedCard && this.previouslyClickedCard != card) {
-      this.previouslyClickedCard.clicked = false;
-    }
-    if (card.clicked) {
-      card.clicked = false;
-    } else {
-      card.clicked = true;
-    }
+    console.log('clicked index: ', index);
     this.previouslyClickedCard = card;
+    this.previouslyClickedCardIndex = index;
   }
 
-  processClickedCell(rowNum: number, colNum: number) {
-    console.log('clicked rowNum=' + rowNum + ', colNum=', colNum, 'previouslyClickedCard=', this.previouslyClickedCard);
+  handleClickedCell(index: number) {
+    console.log('clicked index=', index);
+    console.log('previouslyClickedCard=', this.previouslyClickedCard);
     
-    if (this.previouslyClickedCard 
-      && !this.activeGame.board[rowNum][colNum].card 
-      && this.activeGame.currentTurn 
-      && this.isPutCardAllowed(rowNum, this.previouslyClickedCard)
-      && this.activeGame.energy - this.previouslyClickedCard.cost >= 0
-      && this.activeGame.status === 'IN_PROGRESS' || this.activeGame.status === 'WAITING_PLAYER_2') {
+    let rowNum: number = Math.floor(index / this.activeGame.numCols);
+    let colNum: number = Math.floor(index % this.activeGame.numCols)
 
-      this.activeGame.board[rowNum][colNum].card = this.previouslyClickedCard;
-      let usedCardIndex = this.activeGame.cards.indexOf(this.previouslyClickedCard);
+    console.log('rowNum:', rowNum, ', colNum:', colNum)
 
+    if (this.previouslyClickedCard && this.activeGame.currentTurn) {
       this.gameService
-        .putCardOnBoard(this.activeGame.id, this.currentUser.sessionToken, rowNum, colNum, this.previouslyClickedCard)
-        .subscribe(game => {
-          this.activeGame = game;
-          this.gameService.drawCard(this.activeGame.id, this.currentUser.sessionToken, usedCardIndex)
-            .subscribe(card => {
-              console.log('drew new card: ', card);
-              card.justDrew = true;
-              this.activeGame.cards.splice(usedCardIndex, 1, card);
+        .putCardOnBoard(this.activeGame.id, this.currentUser.sessionToken, rowNum, colNum, this.previouslyClickedCard, this.previouslyClickedCardIndex)
+        .subscribe(response => {
+          console.log('putCardResponse:', response);
+          this.activeGame = response.game;
+          if (response.status === 'INVALID') {
+            console.log('invalid put card, showing snack bar');
+            this.snackBar.open(response.message, 'Dismiss', {
+              duration: 2000
             });
+          }
         });
 
       this.previouslyClickedCard = null;
     }
   }
-
-  isPutCardAllowed(rowNum: number, cardToPut: Card): boolean {
-    if (cardToPut.type === 'WALL') {
-      return (rowNum >= this.activeGame.board.length - 1)
-    } else if (cardToPut.type ==='TROOP') {
-      return (rowNum >= this.activeGame.board.length - 2)
-    }
-    return false;
-  }
-
 }
