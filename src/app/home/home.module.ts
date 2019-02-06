@@ -14,6 +14,7 @@ import {MatDividerModule} from '@angular/material/divider';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
     MatDividerModule,
     MatChipsModule,
     MatSnackBarModule,
-    NoopAnimationsModule
+    NoopAnimationsModule,
+    MatExpansionModule,
   ],
   declarations: [
     HomeComponent

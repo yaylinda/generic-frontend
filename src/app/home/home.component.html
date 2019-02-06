@@ -55,13 +55,18 @@
         <!-- Game Board -->
         <mat-grid-list [cols]="activeGame.numCols">
           <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells; let i = index;" (click)="handleClickedCell(i)">
-              <button *ngIf="cell.state==='OCCUPIED'" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
+            <div *ngIf="cell.state==='OCCUPIED'; then showCard else showNothing"></div>
+            <ng-template #showCard>
+                <button *ngIf="cell.state==='OCCUPIED' && cell.card.owner===activeGame.username" color="accent" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
+                <button *ngIf="cell.state==='OCCUPIED' && cell.card.owner===activeGame.opponentName" color="warn" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
+              </ng-template>
+            <ng-template #showNothing></ng-template>
           </mat-grid-tile>
         </mat-grid-list>
         <br/>
 
         <!-- Cards in Hand -->
-        <button *ngFor="let card of activeGame.cards; let i = index;" [matBadge]="card.cost" matBadgePosition="below after" (click)="handleClickedCard(card, i)" mat-fab>
+        <button *ngFor="let card of activeGame.cards; let i = index;" color="accent" [matBadge]="card.cost" matBadgePosition="below after" (click)="handleClickedCard(card, i)" mat-fab>
           {{card.type}}
         </button>
         <br/><br/>
