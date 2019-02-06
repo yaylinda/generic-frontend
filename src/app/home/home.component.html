@@ -10,69 +10,7 @@
   <div class="container page">
 
     <!-- Logged in content -->
-    <div class="row" *appShowAuthed="true">
-      <!-- <div id="main-panel" class="col-md-9 panel">
-
-        <div *ngIf="activeGame">
-
-          <h3 *ngIf="activeGame.opponentName">{{ activeGame.username }} vs. {{ activeGame.opponentName }}</h3>
-          <h3 *ngIf="!activeGame.opponentName">{{ activeGame.username }}'s new Simple War</h3>
-
-          <div id="game-stats">
-            <p *ngIf="activeGame.currentTurn && activeGame.status === 'IN_PROGRESS'">Status: My Turn</p>
-            <p *ngIf="!activeGame.currentTurn && activeGame.status === 'IN_PROGRESS'">Status: Opponent's Turn</p>
-            <p *ngIf="activeGame.status === 'COMPLETED'">Status: Game Over.</p>
-
-            <p>Energy: {{activeGame.energy}} || My Points: {{activeGame.points}} || Opponent's Points: {{activeGame.opponentPoints}} || Turns: {{activeGame.numTurns}} || Cards Played: {{activeGame.numCardsPlayed}}</p>
-          </div>
-
-          <table>
-            <tr *ngFor="let rowNum of numRows">
-                <td *ngFor="let colNum of numCols" (click)="processClickedCell(rowNum, colNum)" 
-                    [ngClass]="[(activeGame.currentTurn && (rowNum >= activeGame.board.length-2)) ? 'playable' : '', (activeGame.board[rowNum][colNum].card && activeGame.board[rowNum][colNum].card.owner === activeGame.username) ? 'mine' : 'notmine']">
-                  <p *ngIf="activeGame.board[rowNum][colNum].card">{{activeGame.board[rowNum][colNum].card.type}}</p>
-                  <p *ngIf="activeGame.board[rowNum][colNum].card">Might: {{activeGame.board[rowNum][colNum].card.might}}</p>
-                </td>
-              </tr>
-          </table>
-
-          <div id="hand">
-            <div id="card" *ngFor="let card of activeGame.cards" [ngClass]="[card.clicked ? 'highlight-card' : '', card.justDrew ? 'just-drew' : '']" (click)="processClickedCard(card)">
-              <p>{{card.type}}</p>
-              <p>Cost: {{card.cost}}</p>
-              <p>Might: {{card.might}}</p>
-            </div>            
-          </div>
-
-          <div id="end-turn-btn-div">
-            <button *ngIf="activeGame.currentTurn" id="end-turn-btn" (click)="endTurn()">End Turn</button>          
-          </div>
-
-        </div>
-
-      </div>
-
-      <div id="side-panel" class="col-md-3 panel">
-          <h3>Your Wars [{{games.length}}]</h3>
-          <p *ngIf="games.length == 0">You are in 0 Simple Wars... start a new one!</p>
-  
-          <ul class="games-list" *ngIf="games">
-            <li *ngFor="let game of games" (click)="setActiveGame(game)">
-                {{ game.status }} - {{ game.username }} vs. {{ game.opponentName }}
-            </li>
-          </ul>
-
-          <button *ngIf="!activeGame" (click)="startGame()">Start New War</button>
-          
-          <hr/>
-
-          <h3>Your Completed Wars [{{completedGames.length}}]</h3>
-          <ul class="games-list" *ngIf="completedGames">
-              <li *ngFor="let game of completedGames">
-                  {{ game.username }} vs. {{ game.opponentName }} - {{ game.points }} to {{ game.opponentPoints }}
-              </li>
-            </ul>
-      </div> -->
+    <div *appShowAuthed="true">
 
       <!-- Game List -->
       <div *ngIf="!inGameMode" class="content-center">
@@ -117,8 +55,6 @@
         <!-- Game Board -->
         <mat-grid-list [cols]="activeGame.numCols">
           <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells; let i = index;" (click)="handleClickedCell(i)">
-              <!-- <mat-grid-tile-header *ngIf="cell.card">{{cell.card.type}}</mat-grid-tile-header>
-              <mat-grid-tile-footer *ngIf="cell.card">{{cell.card.might}}</mat-grid-tile-footer> -->
               <button *ngIf="cell.state==='OCCUPIED'" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
           </mat-grid-tile>
         </mat-grid-list>
@@ -131,15 +67,15 @@
         <br/><br/>
 
         <!-- End Turn / Discard Hand Buttons -->
-        <button *ngIf="activeGame.currentTurn" (click)="endTurn()" class="fill-width-btn" mat-raised-button>End Turn</button>
+        <button *ngIf="activeGame.currentTurn" (click)="endTurn(false)" class="fill-width-btn" mat-raised-button>End Turn</button>
         <br/><br/>
-        <button *ngIf="activeGame.currentTurn" (click)="discardHandAndEndTurn()" class="fill-width-btn" mat-raised-button>Discard Hand and End Turn</button>
+        <button *ngIf="activeGame.currentTurn" (click)="endTurn(true)" class="fill-width-btn" mat-raised-button>Discard Hand and End Turn</button>
 
       </div>
     </div>
 
     <!-- Logged out content -->
-    <div class="row" *appShowAuthed="false">
+    <div *appShowAuthed="false">
       Log in or register to see more content :)
     </div>
 

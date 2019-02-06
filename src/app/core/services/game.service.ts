@@ -24,8 +24,8 @@ export class GameService {
     }));
   }
 
-  endTurn(gameId: string, sessionToken: string): Observable<Game> {
-    return this.apiService.get('/games/endTurn/' + gameId, sessionToken).pipe(map(data => {
+  endTurn(gameId: string, sessionToken: string, discardHand: boolean): Observable<Game> {
+    return this.apiService.get('/games/endTurn/' + gameId + '?discard=' + discardHand, sessionToken).pipe(map(data => {
       return data;
     }));
   }
