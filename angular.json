@@ -26,6 +26,23 @@
             "scripts": []
           },
           "configurations": {
+            "dev": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev.ts"
+                }
+              ]
+            },
             "production": {
               "optimization": true,
               "outputHashing": "all",
@@ -51,6 +68,9 @@
             "browserTarget": "ang2-conduit:build"
           },
           "configurations": {
+            "dev": {
+              "browserTarget": "ang2-conduit:build:dev"
+            },
             "production": {
               "browserTarget": "ang2-conduit:build:production"
             }
