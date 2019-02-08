@@ -30,6 +30,16 @@ mat-list-item {
   width: 100%;
 }
 
+.spacer {
+  flex: 1 1 auto;
+}
+
+.create-game-icon {
+  cursor: pointer;
+}
+
+/* OLD CSS */
+
 table {
   border: 2px solid greenyellow;
   border-radius: 10px;

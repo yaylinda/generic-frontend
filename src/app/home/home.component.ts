@@ -11,6 +11,7 @@ import { Cell } from '../core/models/cell.model';
 import {MatSnackBar} from '@angular/material';
 
 import { environment } from '../../environments/environment';
+import { getLocaleDayNames } from '@angular/common';
 
 @Component({
   selector: 'app-home-page',
@@ -26,14 +27,12 @@ export class HomeComponent implements OnInit {
     private snackBar: MatSnackBar
   ) { }
 
-  numRows: number[] = [0,1,2,3,4];
-  numCols: number[] = [0,1,2,3];
-
   isAuthenticated: boolean;
   currentUser: User;
 
   games: Game[] = [];
   completedGames: Game[] = [];
+  joinableGames: Game[] = [];
   activeGame: Game;
   activeGameCells: Cell[];
 
@@ -48,17 +47,9 @@ export class HomeComponent implements OnInit {
     this.userService.isAuthenticated.subscribe((authenticated) => {
         this.isAuthenticated = authenticated;
         if (authenticated) {
-          console.log(authenticated);
+          console.log("user is authenticated");
           this.currentUser = this.userService.getCurrentUser();
-          this.gameService.getGames(this.currentUser.sessionToken).subscribe(data => {
-            data.forEach(g => {
-              if (g.status === 'COMPLETED') {
-                this.completedGames.push(g);
-              } else {
-                this.games.push(g);
-              }
-            })
-          });
+          this.getGamesLists();
           this.initializeWebSocketConnection();
         }
       });
@@ -69,8 +60,9 @@ export class HomeComponent implements OnInit {
     this.stompClient = Stomp.over(ws);
     let that = this;
 
-    this.stompClient.connect({}, function(frame) {
+    this.stompClient.connect({}, function() {
 
+      // when opponent ended turn, update activeGame/Cells
       that.stompClient.subscribe("/topic/opponentEndedTurn/" + that.currentUser.username, (message) => {
         console.log("result from subscribe opponentEndedTurn: " + message);
         if(message.body) {
@@ -82,13 +74,10 @@ export class HomeComponent implements OnInit {
               that.activeGameCells = that.activeGameCells.concat(that.activeGame.board[i]);
             }
           });
-          that.gameService.getGames(that.currentUser.sessionToken).subscribe(games => {
-            console.log('result from getGames (after getting message):', games)
-            that.games = games;
-          });
         }
       });
 
+      // when opponent put card on board, update activeGame/Cells
       that.stompClient.subscribe("/topic/opponentPutCard/" + that.currentUser.username, (message) => {
         console.log("result from subscribe opponentPutCard: " + message);
         if(message.body) {
@@ -114,19 +103,34 @@ export class HomeComponent implements OnInit {
               that.activeGameCells = that.activeGameCells.concat(that.activeGame.board[i]);
             }
           });
-          that.gameService.getGames(that.currentUser.sessionToken).subscribe(games => {
-            console.log('result from getGamesForUser (after player 2 joined):', games)
-            that.games = games;
+        }
+      });
+
+      that.stompClient.subscribe("/topic/gameCreated", (message) => {
+        console.log("game created... updating joinable games: ", message);
+        if (message.body != that.currentUser.username) {
+          that.gameService.getJoinableGames(that.currentUser.sessionToken).subscribe(games => {
+            console.log('result from getJoinableGames:', getLocaleDayNames)
+            that.joinableGames = games;
           });
         }
       });
     });
   }
 
-  startGame() {
+  joinGame(gameId) {
+    console.log('join game pressed');
+    this.gameService.joinGame(this.currentUser.sessionToken, gameId).subscribe(newGame => {
+      console.log("join game result: ", newGame);
+      this.updateActiveGameAndCellsList(newGame);
+      this.inGameMode = true;
+    });
+  }
+
+  createGame() {
     console.log('start game pressed');
-    this.gameService.startGame(this.currentUser.sessionToken).subscribe(newGame => {
-      console.log("new game from game service: ", newGame);
+    this.gameService.createGame(this.currentUser.sessionToken).subscribe(newGame => {
+      console.log("new game result: ", newGame);
       this.updateActiveGameAndCellsList(newGame);
       this.inGameMode = true;
     });
@@ -143,18 +147,9 @@ export class HomeComponent implements OnInit {
     this.activeGame = null;
     this.activeGameCells = [];
     this.games = [];
+    this.joinableGames = [];
     this.completedGames = [];
-
-    this.gameService.getGames(this.currentUser.sessionToken).subscribe(data => {
-      console.log("getting games list: ", data);
-      data.forEach(g => {
-        if (g.status === 'COMPLETED') {
-          this.completedGames.push(g);
-        } else {
-          this.games.push(g);
-        }
-      })
-    });
+    this.getGamesLists();
   }
 
   endTurn(dicardHand: boolean) {
@@ -162,9 +157,6 @@ export class HomeComponent implements OnInit {
       this.gameService.endTurn(this.activeGame.id, this.currentUser.sessionToken, dicardHand).subscribe(game => {
         console.log("END TURN result from game service: ", game);
         this.updateActiveGameAndCellsList(game);
-        this.gameService.getGames(this.currentUser.sessionToken).subscribe(games => {
-          this.games = games;
-        });
       });
     }
   }
@@ -200,6 +192,24 @@ export class HomeComponent implements OnInit {
         });
       this.previouslyClickedCard = null;
     }
+  }
+
+  getGamesLists() {
+    this.gameService.getGames(this.currentUser.sessionToken).subscribe(data => {
+      data.forEach(g => {
+        if (g.status === 'COMPLETED') {
+          this.completedGames.push(g);
+        } else {
+          this.games.push(g);
+        }
+      })
+      console.log("games: ", this.games);
+      console.log("completedGames: ", this.completedGames);
+    });
+    this.gameService.getJoinableGames(this.currentUser.sessionToken).subscribe(data => {
+      this.joinableGames = data;
+      console.log("joinableGames: ", this.joinableGames);
+    });
   }
 
   updateActiveGameAndCellsList(newGame: Game) {

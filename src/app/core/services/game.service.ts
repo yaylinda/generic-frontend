@@ -18,8 +18,20 @@ export class GameService {
     }));
   }
 
-  startGame(sessionToken: string): Observable<Game> {
-    return this.apiService.get('/games/start', sessionToken).pipe(map(data => {
+  getJoinableGames(sessionToken: string): Observable<Game[]> {
+    return this.apiService.get('/games/joinable', sessionToken).pipe(map(data => {
+        return data;
+    }));
+  }
+
+  joinGame(sessionToken: string, gameId: string): Observable<Game> {
+    return this.apiService.get(`/games/join?gameId=${gameId}`, sessionToken).pipe(map(data => {
+      return data;
+    }));
+  }
+
+  createGame(sessionToken: string): Observable<Game> {
+    return this.apiService.post('/games/new', {}, sessionToken).pipe(map(data => {
       return data;
     }));
   }

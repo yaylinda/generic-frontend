@@ -10,23 +10,76 @@
   <div class="container page">
 
     <!-- Logged in content -->
-    <div *appShowAuthed="true">
+    <div *appShowAuthed="true">                                     
 
       <!-- Game List -->
       <div *ngIf="!inGameMode" class="content-center">
-        <mat-divider></mat-divider>
-        <mat-list>
-          <mat-list-item *ngFor="let game of games; let i = index;" (click)="handleClickedGame(i)">
-            <mat-icon *ngIf="game.currentTurn" class="color-green" matListIcon>stay_current_landscape</mat-icon>
-            <mat-icon *ngIf="!game.currentTurn" class="color-red" matListIcon>stay_current_landscape</mat-icon>
-            <h3 matLine>Simple War against {{game.opponentName}}</h3>
-            <p matLine>Score: {{game.points}} vs. {{game.opponentPoints}}</p>
-          </mat-list-item>
-        </mat-list>
-        <p *ngIf="games.length === 0">You have no active Simple Wars. Start a new one!</p>
-        <mat-divider></mat-divider>
-        <br/>
-        <button (click)="startGame()" class="fill-width-btn" color="primary" mat-raised-button>Start new Simple War</button>
+
+        <!-- My Games -->
+        <mat-toolbar color="primary">
+            <span>My Simple Wars</span>
+            <span class="spacer"></span>
+            <mat-icon (click)="createGame()" class="create-game-icon">queue</mat-icon>
+          </mat-toolbar>
+          <mat-grid-list rowHeight="2:1" cols="3">
+            <mat-grid-tile *ngFor="let game of games; let i = index;">
+              <mat-card>
+                  <mat-card-header>
+                    <mat-icon mat-card-avatar *ngIf="game.currentTurn" class="color-green" matListIcon>stay_current_landscape</mat-icon>
+                    <mat-icon mat-card-avatar *ngIf="!game.currentTurn" class="color-red" matListIcon>stay_current_landscape</mat-icon>
+                    <mat-card-title>Simple War against {{game.opponentName}}</mat-card-title>
+                    <mat-card-subtitle>Score: {{game.points}} vs. {{game.opponentPoints}}</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-actions>
+                    <button (click)="handleClickedGame(i)" align="end" mat-button>RESUME</button>
+                  </mat-card-actions>
+                </mat-card>
+            </mat-grid-tile>
+          </mat-grid-list>
+          <p *ngIf="games.length === 0">You have no active Simple Wars.</p>
+          
+          <!-- Joinable Games List -->
+          <mat-toolbar color="primary">
+            <span>Joinable Simple Wars</span>
+          </mat-toolbar>
+          <mat-grid-list rowHeight="2:1" cols="3">
+            <mat-grid-tile *ngFor="let game of joinableGames; let i = index;">
+              <mat-card>
+                <mat-card-header>
+                  <mat-icon mat-card-avatar *ngIf="game.currentTurn" class="color-green" matListIcon>stay_current_landscape</mat-icon>
+                  <mat-icon mat-card-avatar *ngIf="!game.currentTurn" class="color-red" matListIcon>stay_current_landscape</mat-icon>
+                  <mat-card-title>{{game.opponentName}}'s Simple War</mat-card-title>
+                  <mat-card-subtitle>Created: {{game.createdDate}}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-actions>
+                  <button (click)="joinGame(game.id)" align="end" mat-button>JOIN</button>
+                </mat-card-actions>
+              </mat-card>
+            </mat-grid-tile>
+          </mat-grid-list>
+          <p *ngIf="joinableGames.length === 0">There are no waiting Simple Wars to join.</p>
+
+          <!-- Completed Games -->
+          <mat-toolbar color="primary">
+            <span>Completed Simple Wars</span>
+          </mat-toolbar>
+          <mat-grid-list rowHeight="2:1" cols="3">
+            <mat-grid-tile *ngFor="let game of completedGames; let i = index;">
+              <mat-card>
+                  <mat-card-header>
+                    <mat-icon mat-card-avatar *ngIf="game.currentTurn" class="color-green" matListIcon>stay_current_landscape</mat-icon>
+                    <mat-icon mat-card-avatar *ngIf="!game.currentTurn" class="color-red" matListIcon>stay_current_landscape</mat-icon>
+                    <mat-card-title>Simple War against {{game.opponentName}}</mat-card-title>
+                    <mat-card-subtitle>Winner: {{game.winner}}</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-actions>
+                    <button (click)="handleClickedGame(i)" align="end" mat-button>VIEW</button>
+                  </mat-card-actions>
+                </mat-card>
+            </mat-grid-tile>
+          </mat-grid-list>
+          <p *ngIf="completedGames.length === 0">You have not completed any Simple Wars.</p>
+
       </div>
 
       <!-- One Game -->
@@ -53,9 +106,9 @@
         <br/><br/>
 
         <!-- Game Board -->
-        <mat-grid-list [cols]="activeGame.numCols">
+        <mat-grid-list [cols]="activeGame.numCols" gutterSize="10px">
           <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells; let i = index;" (click)="handleClickedCell(i)">
-            <div *ngIf="cell.state==='OCCUPIED'; then showCard else showNothing"></div>
+            <div *ngIf="cell.card; then showCard else showNothing"></div>
             <ng-template #showCard>
                 <button *ngIf="cell.state==='OCCUPIED' && cell.card.owner===activeGame.username" color="accent" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
                 <button *ngIf="cell.state==='OCCUPIED' && cell.card.owner===activeGame.opponentName" color="warn" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
@@ -77,6 +130,7 @@
         <button *ngIf="activeGame.currentTurn" (click)="endTurn(true)" class="fill-width-btn" mat-raised-button>Discard Hand and End Turn</button>
 
       </div>
+    
     </div>
 
     <!-- Logged out content -->
@@ -85,4 +139,5 @@
     </div>
 
   </div>
+
 </div>
