@@ -106,7 +106,7 @@
         <br/><br/>
 
         <!-- Game Board -->
-        <mat-grid-list rowHeight="8rem" [cols]="activeGame.numCols" gutterSize="10px" class="content-center half-width">
+        <mat-grid-list [cols]="activeGame.numCols" gutterSize="10px" class="content-center">
           <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells; let i = index;" (click)="handleClickedCell(i)">
             <div *ngIf="cell.card; then showCard else showNothing"></div>
             <ng-template #showCard>
@@ -116,6 +116,7 @@
             <ng-template #showNothing></ng-template>
           </mat-grid-tile>
         </mat-grid-list>
+
         <br/>
 
         <!-- Cards in Hand -->
