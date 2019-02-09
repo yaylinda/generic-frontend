@@ -38,6 +38,15 @@ mat-list-item {
   cursor: pointer;
 }
 
+.center-children-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.half-width {
+  width:50%;
+}
+
 /* OLD CSS */
 
 table {

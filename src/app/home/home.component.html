@@ -21,7 +21,7 @@
           <span class="spacer"></span>
           <mat-icon (click)="createGame()" class="create-game-icon">queue</mat-icon>
         </mat-toolbar>
-        <mat-grid-list rowHeight="2:1" gutterSize="10px" cols="3">
+        <mat-grid-list *ngIf="games.length > 0" rowHeight="10rem" [cols]="gamesListNumCols">
           <mat-grid-tile *ngFor="let game of games; let i = index;">
             <mat-card>
                 <mat-card-header>
@@ -42,7 +42,7 @@
         <mat-toolbar color="primary">
           <span>Joinable Simple Wars</span>
         </mat-toolbar>
-        <mat-grid-list rowHeight="2:1" gutterSize="10px" cols="3">
+        <mat-grid-list *ngIf="joinableGames.length > 0" rowHeight="10rem" [cols]="gamesListNumCols">
           <mat-grid-tile *ngFor="let game of joinableGames; let i = index;">
             <mat-card>
               <mat-card-header>
@@ -63,13 +63,13 @@
         <mat-toolbar color="primary">
           <span>Completed Simple Wars</span>
         </mat-toolbar>
-        <mat-grid-list rowHeight="2:1" gutterSize="10px" cols="3">
+        <mat-grid-list *ngIf="completedGames.length > 0" rowHeight="10rem" [cols]="gamesListNumCols">
           <mat-grid-tile *ngFor="let game of completedGames; let i = index;">
             <mat-card>
                 <mat-card-header>
                   <mat-icon mat-card-avatar *ngIf="game.currentTurn" class="color-green" matListIcon>stay_current_landscape</mat-icon>
                   <mat-icon mat-card-avatar *ngIf="!game.currentTurn" class="color-red" matListIcon>stay_current_landscape</mat-icon>
-                  <mat-card-title>Simple War against \n{{game.opponentName}}</mat-card-title>
+                  <mat-card-title>Simple War against {{game.opponentName}}</mat-card-title>
                   <mat-card-subtitle>Winner: {{game.winner}}</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-actions>
@@ -106,7 +106,7 @@
         <br/><br/>
 
         <!-- Game Board -->
-        <mat-grid-list [cols]="activeGame.numCols" gutterSize="10px">
+        <mat-grid-list rowHeight="8rem" [cols]="activeGame.numCols" gutterSize="10px" class="content-center half-width">
           <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells; let i = index;" (click)="handleClickedCell(i)">
             <div *ngIf="cell.card; then showCard else showNothing"></div>
             <ng-template #showCard>
@@ -119,9 +119,12 @@
         <br/>
 
         <!-- Cards in Hand -->
-        <button *ngFor="let card of activeGame.cards; let i = index;" color="accent" [matBadge]="card.cost" matBadgePosition="below after" (click)="handleClickedCard(card, i)" mat-fab>
-          {{card.type}}
-        </button>
+        <div class="content-center center-children-wrapper">
+          <button *ngFor="let card of activeGame.cards; let i = index;" color="accent" [matBadge]="card.cost" matBadgePosition="below after" (click)="handleClickedCard(card, i)" mat-fab>
+            {{card.type}}
+          </button>
+        </div>
+
         <br/><br/>
 
         <!-- End Turn / Discard Hand Buttons -->

@@ -30,6 +30,8 @@ export class HomeComponent implements OnInit {
   isAuthenticated: boolean;
   currentUser: User;
 
+  gamesListNumCols: number;
+
   games: Game[] = [];
   completedGames: Game[] = [];
   joinableGames: Game[] = [];
@@ -44,6 +46,7 @@ export class HomeComponent implements OnInit {
   stompClient;
 
   ngOnInit() {
+    this.gamesListNumCols = 1;
     this.userService.isAuthenticated.subscribe((authenticated) => {
         this.isAuthenticated = authenticated;
         if (authenticated) {
