@@ -1,4 +1,5 @@
 export interface Card {
+    id: string;
     owner: string;
     type: string;
     might: number

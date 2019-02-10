@@ -108,12 +108,10 @@
         <!-- Game Board -->
         <mat-grid-list [cols]="activeGame.numCols" gutterSize="10px" class="content-center">
           <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells; let i = index;" (click)="handleClickedCell(i)">
-            <div *ngIf="cell.card; then showCard else showNothing"></div>
-            <ng-template #showCard>
-                <button *ngIf="cell.card && cell.card.owner===activeGame.username" color="accent" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
-                <button *ngIf="cell.card && cell.card.owner===activeGame.opponentName" color="warn" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
-              </ng-template>
-            <ng-template #showNothing></ng-template>
+            <div *ngFor="let card of cell.cards">
+              <button *ngIf="card.owner===currentUser.username" color="accent" [matBadge]="card.might" matBadgePosition="above before" mat-fab>{{card.type}}</button>
+              <button *ngIf="card.owner!==currentUser.username" color="warn" [matBadge]="card.might" matBadgePosition="above before" mat-fab>{{card.type}}</button>
+            </div>
           </mat-grid-tile>
         </mat-grid-list>
 
