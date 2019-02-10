@@ -142,9 +142,13 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  handleClickedGame(gameIndex: number) {
+  handleClickedGame(gameIndex: number, useActiveGamesList: boolean) {
     console.log('clicked game at index: ', gameIndex);
-    this.updateActiveGameAndCellsList(this.games[gameIndex]);
+    if (useActiveGamesList) {
+      this.updateActiveGameAndCellsList(this.games[gameIndex]);
+    } else {
+      this.updateActiveGameAndCellsList(this.completedGames[gameIndex]);
+    }
     this.inGameMode = true;
   }
 

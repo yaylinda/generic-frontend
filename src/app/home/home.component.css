@@ -47,6 +47,10 @@ mat-list-item {
   width:50%;
 }
 
+.shrink {
+  transform: scale(0.5);
+}
+
 /* OLD CSS */
 
 table {
