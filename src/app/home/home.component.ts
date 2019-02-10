@@ -180,7 +180,7 @@ export class HomeComponent implements OnInit {
 
     console.log('rowNum:', rowNum, ', colNum:', colNum)
 
-    if (this.previouslyClickedCard && this.activeGame.currentTurn) {
+    if (this.previouslyClickedCard && this.activeGame.currentTurn && this.activeGame.status !== 'COMPLETED') {
       this.gameService
         .putCardOnBoard(this.activeGame.id, this.currentUser.sessionToken, rowNum, colNum, this.previouslyClickedCard, this.previouslyClickedCardIndex)
         .subscribe(response => {

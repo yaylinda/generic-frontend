@@ -21,4 +21,5 @@ export interface Game {
     player2JoinDate: string;
     lastModifiedDate: string;
     completedDate: string;
+    winner: string;
 }

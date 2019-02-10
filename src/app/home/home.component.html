@@ -42,7 +42,7 @@
         <mat-toolbar color="primary">
           <span>Joinable Simple Wars</span>
         </mat-toolbar>
-        <mat-grid-list *ngIf="joinableGames.length > 0" rowHeight="10rem" [cols]="gamesListNumCols">
+        <mat-grid-list *ngIf="joinableGames.length > 0" rowHeight="10rem" [cols]="gamesListNumCols" style="width:100%">
           <mat-grid-tile *ngFor="let game of joinableGames; let i = index;">
             <mat-card>
               <mat-card-header>
@@ -110,8 +110,8 @@
           <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells; let i = index;" (click)="handleClickedCell(i)">
             <div *ngIf="cell.card; then showCard else showNothing"></div>
             <ng-template #showCard>
-                <button *ngIf="cell.state==='OCCUPIED' && cell.card.owner===activeGame.username" color="accent" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
-                <button *ngIf="cell.state==='OCCUPIED' && cell.card.owner===activeGame.opponentName" color="warn" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
+                <button *ngIf="cell.card && cell.card.owner===activeGame.username" color="accent" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
+                <button *ngIf="cell.card && cell.card.owner===activeGame.opponentName" color="warn" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
               </ng-template>
             <ng-template #showNothing></ng-template>
           </mat-grid-tile>
@@ -129,9 +129,9 @@
         <br/><br/>
 
         <!-- End Turn / Discard Hand Buttons -->
-        <button *ngIf="activeGame.currentTurn" (click)="endTurn(false)" class="fill-width-btn" mat-raised-button>End Turn</button>
+        <button *ngIf="activeGame.currentTurn && activeGame.status!=='COMPLETED'" (click)="endTurn(false)" class="fill-width-btn" mat-raised-button>End Turn</button>
         <br/><br/>
-        <button *ngIf="activeGame.currentTurn" (click)="endTurn(true)" class="fill-width-btn" mat-raised-button>Discard Hand and End Turn</button>
+        <button *ngIf="activeGame.currentTurn && activeGame.status!=='COMPLETED'" (click)="endTurn(true)" class="fill-width-btn" mat-raised-button>Discard Hand and End Turn</button>
 
       </div>
     
