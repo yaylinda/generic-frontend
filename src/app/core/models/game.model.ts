@@ -6,6 +6,7 @@ export interface Game {
     username: string;
     opponentName: string;
     board: Cell[][];
+    transitionBoard: Cell[][];
     previousBoard: Cell[][];
     currentTurn: boolean;
     points: number;

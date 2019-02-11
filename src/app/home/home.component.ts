@@ -95,6 +95,7 @@ export class HomeComponent implements OnInit {
         }
       });
 
+      // when player 2 joins the game, update the active game display
       that.stompClient.subscribe("/topic/player2Joined/" + that.currentUser.username, (message) => {
         console.log("result from subscribe player2Joined: " + message);
         if(message.body) {
@@ -109,6 +110,7 @@ export class HomeComponent implements OnInit {
         }
       });
 
+      // when another player created a game, update joinable games list
       that.stompClient.subscribe("/topic/gameCreated", (message) => {
         console.log("game created... updating joinable games: ", message);
         if (message.body != that.currentUser.username) {
@@ -118,6 +120,7 @@ export class HomeComponent implements OnInit {
           });
         }
       });
+      
     });
   }
 
@@ -139,9 +142,13 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  handleClickedGame(gameIndex: number) {
+  handleClickedGame(gameIndex: number, useActiveGamesList: boolean) {
     console.log('clicked game at index: ', gameIndex);
-    this.updateActiveGameAndCellsList(this.games[gameIndex]);
+    if (useActiveGamesList) {
+      this.updateActiveGameAndCellsList(this.games[gameIndex]);
+    } else {
+      this.updateActiveGameAndCellsList(this.completedGames[gameIndex]);
+    }
     this.inGameMode = true;
   }
 

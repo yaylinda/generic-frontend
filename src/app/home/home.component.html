@@ -31,7 +31,7 @@
                   <mat-card-subtitle>Score: {{game.points}} vs. {{game.opponentPoints}}</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-actions>
-                  <button (click)="handleClickedGame(i)" align="end" mat-button>RESUME</button>
+                  <button (click)="handleClickedGame(i, true)" align="end" mat-button>RESUME</button>
                 </mat-card-actions>
               </mat-card>
           </mat-grid-tile>
@@ -67,13 +67,13 @@
           <mat-grid-tile *ngFor="let game of completedGames; let i = index;">
             <mat-card>
                 <mat-card-header>
-                  <mat-icon mat-card-avatar *ngIf="game.currentTurn" class="color-green" matListIcon>stay_current_landscape</mat-icon>
-                  <mat-icon mat-card-avatar *ngIf="!game.currentTurn" class="color-red" matListIcon>stay_current_landscape</mat-icon>
+                  <mat-icon mat-card-avatar *ngIf="game.winner===currentUser.username" class="color-green" matListIcon>mood</mat-icon>
+                  <mat-icon mat-card-avatar *ngIf="game.winner!==currentUser.username" class="color-red" matListIcon>mood_bad</mat-icon>
                   <mat-card-title>Simple War against {{game.opponentName}}</mat-card-title>
                   <mat-card-subtitle>Winner: {{game.winner}}</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-actions>
-                  <button (click)="handleClickedGame(i)" align="end" mat-button>VIEW</button>
+                  <button (click)="handleClickedGame(i, false)" align="end" mat-button>VIEW</button>
                 </mat-card-actions>
               </mat-card>
           </mat-grid-tile>
@@ -95,7 +95,6 @@
           <mat-chip>Status: {{activeGame.status}}</mat-chip> 
           <mat-chip>Score: {{activeGame.points}} vs. {{activeGame.opponentPoints}}</mat-chip>
           <mat-chip>My Turn: {{activeGame.currentTurn}}</mat-chip>
-          <mat-chip>Energy: {{activeGame.energy}}</mat-chip>
           <mat-chip>Number of Cards Played: {{activeGame.numCardsPlayed}}</mat-chip>
           <mat-chip>Number of Turns: {{activeGame.numTurns}}</mat-chip>
           <mat-chip>Created: {{activeGame.createdDate}}</mat-chip>
@@ -108,14 +107,24 @@
         <!-- Game Board -->
         <mat-grid-list [cols]="activeGame.numCols" gutterSize="10px" class="content-center">
           <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells; let i = index;" (click)="handleClickedCell(i)">
-            <div *ngIf="cell.card; then showCard else showNothing"></div>
-            <ng-template #showCard>
-                <button *ngIf="cell.card && cell.card.owner===activeGame.username" color="accent" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
-                <button *ngIf="cell.card && cell.card.owner===activeGame.opponentName" color="warn" [matBadge]="cell.card.might" matBadgePosition="above before" mat-fab>{{cell.card.type}}</button>
-              </ng-template>
-            <ng-template #showNothing></ng-template>
+            <div [ngClass]="cell.cards.length > 1 ? 'shrink' : ''">
+              <div *ngFor="let card of cell.cards">
+                <button *ngIf="card.owner===currentUser.username" color="accent" [matBadge]="card.might" matBadgePosition="above before" mat-fab>
+                  {{card.numTurnsOnBoard === 0 ? '*' : ''}}{{card.type}}{{card.numTurnsOnBoard === 0 ? '*' : ''}}
+                </button>
+                <button *ngIf="card.owner!==currentUser.username" color="warn" [matBadge]="card.might" matBadgePosition="above before" mat-fab>
+                  {{card.numTurnsOnBoard === 0 ? '*' : ''}}{{card.type}}{{card.numTurnsOnBoard === 0 ? '*' : ''}}
+                </button>
+              </div>
+            </div>
           </mat-grid-tile>
         </mat-grid-list>
+
+        <br/>
+
+        <mat-chip-list class="content-center center-children-wrapper">
+          <mat-chip>Energy: {{activeGame.energy}}</mat-chip>
+        </mat-chip-list>
 
         <br/>
 
