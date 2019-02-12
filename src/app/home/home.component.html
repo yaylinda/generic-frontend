@@ -94,7 +94,6 @@
           <mat-chip>Opponent: {{activeGame.opponentName}}</mat-chip>
           <mat-chip>Status: {{activeGame.status}}</mat-chip> 
           <mat-chip>Score: {{activeGame.points}} vs. {{activeGame.opponentPoints}}</mat-chip>
-          <mat-chip>My Turn: {{activeGame.currentTurn}}</mat-chip>
           <mat-chip>Number of Cards Played: {{activeGame.numCardsPlayed}}</mat-chip>
           <mat-chip>Number of Turns: {{activeGame.numTurns}}</mat-chip>
           <mat-chip>Created: {{activeGame.createdDate}}</mat-chip>
@@ -106,8 +105,8 @@
 
         <!-- Game Board -->
         <mat-grid-list [cols]="activeGame.numCols" gutterSize="10px" class="content-center">
-          <mat-grid-tile class="cell" *ngFor="let cell of activeGameCells; let i = index;" (click)="handleClickedCell(i)">
-            <div [ngClass]="cell.cards.length > 1 ? 'shrink' : ''">
+          <mat-grid-tile *ngFor="let cell of activeGameCells; let i = index;" class="cell" (click)="handleClickedCell(i)">
+            <div [ngClass]="cell.cards.length > 1 ? 'shrink' : ''"> 
               <div *ngFor="let card of cell.cards">
                 <button *ngIf="card.owner===currentUser.username" color="accent" [matBadge]="card.might" matBadgePosition="above before" mat-fab>
                   {{card.numTurnsOnBoard === 0 ? '*' : ''}}{{card.type}}{{card.numTurnsOnBoard === 0 ? '*' : ''}}
@@ -124,6 +123,7 @@
 
         <mat-chip-list class="content-center center-children-wrapper">
           <mat-chip>Energy: {{activeGame.energy}}</mat-chip>
+          <mat-chip>My Turn: {{activeGame.currentTurn}}</mat-chip>
         </mat-chip-list>
 
         <br/>
