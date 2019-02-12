@@ -22,6 +22,11 @@ mat-list-item {
   background-color: lightcyan;
 }
 
+.cell-drop {
+  height: 100%;
+  width: 100%;
+}
+
 .content-center {
   margin: 0 auto;
 }
