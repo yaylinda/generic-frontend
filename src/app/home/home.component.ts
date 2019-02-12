@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import {FormControl} from '@angular/forms';
 
 import { UserService, User, Game } from '../core';
 import { GameService } from '../core/services/game.service';
@@ -43,6 +44,8 @@ export class HomeComponent implements OnInit {
 
   inGameMode: boolean = false;
 
+  selectedTab = new FormControl(0);
+
   stompClient;
 
   ngOnInit() {
@@ -54,6 +57,7 @@ export class HomeComponent implements OnInit {
           this.currentUser = this.userService.getCurrentUser();
           this.getGamesLists();
           this.initializeWebSocketConnection();
+          this.updateActiveGameAndCellsList(this.games[0]);
         }
       });
   }
@@ -130,6 +134,7 @@ export class HomeComponent implements OnInit {
       console.log("join game result: ", newGame);
       this.updateActiveGameAndCellsList(newGame);
       this.inGameMode = true;
+      this.selectedTab.setValue(1);
     });
   }
 
@@ -139,6 +144,7 @@ export class HomeComponent implements OnInit {
       console.log("new game result: ", newGame);
       this.updateActiveGameAndCellsList(newGame);
       this.inGameMode = true;
+      this.selectedTab.setValue(1);
     });
   }
 
@@ -150,6 +156,7 @@ export class HomeComponent implements OnInit {
       this.updateActiveGameAndCellsList(this.completedGames[gameIndex]);
     }
     this.inGameMode = true;
+    this.selectedTab.setValue(1);
   }
 
   handleClickedBack() {
@@ -205,6 +212,7 @@ export class HomeComponent implements OnInit {
   }
 
   getGamesLists() {
+    console.log("getting games lists")
     this.gameService.getGames(this.currentUser.sessionToken).subscribe(data => {
       data.forEach(g => {
         if (g.status === 'COMPLETED') {
