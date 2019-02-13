@@ -13,6 +13,7 @@ import {MatSnackBar} from '@angular/material';
 
 import { environment } from '../../environments/environment';
 import { getLocaleDayNames } from '@angular/common';
+import {MatTabChangeEvent} from '@angular/material/tabs'
 
 @Component({
   selector: 'app-home-page',
@@ -57,7 +58,6 @@ export class HomeComponent implements OnInit {
           this.currentUser = this.userService.getCurrentUser();
           this.getGamesLists();
           this.initializeWebSocketConnection();
-          this.updateActiveGameAndCellsList(this.games[0]);
         }
       });
   }
@@ -159,14 +159,14 @@ export class HomeComponent implements OnInit {
     this.selectedTab.setValue(1);
   }
 
-  handleClickedBack() {
-    this.inGameMode = false;
-    this.activeGame = null;
-    this.activeGameCells = [];
-    this.games = [];
-    this.joinableGames = [];
-    this.completedGames = [];
-    this.getGamesLists();
+  selectedTabChange(event: MatTabChangeEvent) {
+    console.log("tab change");
+    if (event.index === 0) {
+      this.inGameMode = false;
+      this.activeGame = null;
+      this.activeGameCells = [];
+      this.getGamesLists();
+    }
   }
 
   endTurn(dicardHand: boolean) {
@@ -212,6 +212,9 @@ export class HomeComponent implements OnInit {
   }
 
   getGamesLists() {
+    this.games = [];
+    this.joinableGames = [];
+    this.completedGames = [];
     console.log("getting games lists")
     this.gameService.getGames(this.currentUser.sessionToken).subscribe(data => {
       data.forEach(g => {

@@ -11,7 +11,7 @@
     <!-- Logged in content -->
     <div *appShowAuthed="true">      
       
-        <mat-tab-group [selectedIndex]="selectedTab.value" (selectedIndexChange)="selectedTab.setValue($event)" dynamicHeight>
+        <mat-tab-group [selectedIndex]="selectedTab.value" (selectedIndexChange)="selectedTab.setValue($event)" (selectedTabChange)="selectedTabChange($event)" dynamicHeight>
           <mat-tab label="Wars">
 <!-- Game List -->
 <div class="content-center">
@@ -83,7 +83,7 @@
 
   </div>
             </mat-tab>
-            <mat-tab disabled label="Active War">
+            <mat-tab [disabled]="!inGameMode" label="Active War">
 <!-- One Game -->
 <div *ngIf="inGameMode" class="content-center">
 
