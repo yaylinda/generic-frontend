@@ -17,6 +17,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatCardModule} from '@angular/material/card';
+import {MatTabsModule} from '@angular/material/tabs';
 
 @NgModule({
   imports: [
@@ -34,6 +35,7 @@ import {MatCardModule} from '@angular/material/card';
     MatExpansionModule,
     MatToolbarModule,
     MatCardModule,
+    MatTabsModule,
   ],
   declarations: [
     HomeComponent
