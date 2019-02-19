@@ -124,10 +124,7 @@ export class HomeComponent implements OnInit {
       that.stompClient.subscribe("/topic/gameCreated", (message) => {
         console.log("game created... updating joinable games: ", message);
         if (message.body != that.currentUser.username) {
-          that.gameService.getJoinableGames(that.currentUser.sessionToken).subscribe(games => {
-            console.log('result from getJoinableGames:', getLocaleDayNames)
-            that.joinableGames = games;
-          });
+          that.getGamesLists();
         }
       });
 
@@ -175,6 +172,16 @@ export class HomeComponent implements OnInit {
   createGame() {
     console.log('start game pressed');
     this.gameService.createGame(this.currentUser.sessionToken).subscribe(newGame => {
+      console.log("new game result: ", newGame);
+      this.updateActiveGameAndCellsList(newGame);
+      this.inGameMode = true;
+      this.selectedTab.setValue(1);
+    });
+  }
+
+  inviteToGame(player2: string) {
+    console.log('starting game with: ', player2);
+    this.gameService.inviteToGame(this.currentUser.sessionToken, player2).subscribe(newGame => {
       console.log("new game result: ", newGame);
       this.updateActiveGameAndCellsList(newGame);
       this.inGameMode = true;

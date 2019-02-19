@@ -95,4 +95,13 @@ export class GameService {
       return data;
     }));
   }
+
+  inviteToGame(sessionToken: string, player2: string) {
+    let body = {
+      'player2': player2
+    };
+    return this.apiService.post('/games/invite', body, sessionToken).pipe(map(data => {
+      return data;
+    }));
+  }
 }
