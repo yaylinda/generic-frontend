@@ -188,7 +188,7 @@
                     <mat-card-subtitle>Games: {{player.numPlayed}}</mat-card-subtitle>
                     <mat-card-subtitle>Wins: {{player.numWins}}</mat-card-subtitle>
                   </mat-card-header>
-                  <mat-card-actions>
+                  <mat-card-actions *ngIf="player.canAdd">
                     <button (click)="addFriend(player.username)" align="end" mat-button>ADD FRIEND</button>
                   </mat-card-actions>
                 </mat-card>
@@ -200,7 +200,7 @@
             <mat-toolbar color="primary">
               <span>Activity</span>
             </mat-toolbar>
-            <mat-grid-list *ngIf="playerActivities.length > 0" rowHeight="14rem" [cols]="gamesListNumCols">
+            <mat-grid-list *ngIf="playerActivities.length > 0" rowHeight="15rem" [cols]="gamesListNumCols">
               <mat-grid-tile *ngFor="let activity of playerActivities; let i = index;">
                 <mat-card>
                   <mat-card-header>

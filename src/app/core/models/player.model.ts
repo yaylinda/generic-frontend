@@ -4,4 +4,5 @@ export interface Player {
     lastActivity: string;
     numWins: number;
     numPlayed: number;
+    canAdd: boolean;
 }

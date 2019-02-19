@@ -135,25 +135,15 @@ export class HomeComponent implements OnInit {
       that.stompClient.subscribe("/topic/friendRequestReceived/" + that.currentUser.username, (message) => {
         console.log("got a friend request", message);
         if (message.body) {
-          that.gameService.getPlayerActivities(that.currentUser.sessionToken).subscribe(data => {
-            that.playerActivities = data;
-            console.log("got playerActivities: ", that.playerActivities);
-          });
+          that.getPlayersLists();
         }
       });
 
-      // when player responds to currentUser's friend request
+      // when another player responds to currentUser's friend request
       that.stompClient.subscribe("/topic/friendRequestResponse/" + that.currentUser.username, (message) => {
         console.log("got response for friend request", message);
         if (message.body) {
-          that.gameService.getPlayerActivities(that.currentUser.sessionToken).subscribe(data => {
-            that.playerActivities = data;
-            console.log("got playerActivities: ", that.playerActivities);
-          });
-          that.gameService.getFriends(that.currentUser.sessionToken).subscribe(data => {
-            that.friends = data;
-            console.log("got friends: ", that.friends);
-          });
+          that.getPlayersLists();
         }
       });
       
@@ -248,24 +238,14 @@ export class HomeComponent implements OnInit {
   addFriend(usernameToAdd: string) {
     console.log("adding to friends: ", usernameToAdd);
     this.gameService.addFriend(this.currentUser.sessionToken, usernameToAdd).subscribe(() => {
-      this.gameService.getPlayerActivities(this.currentUser.sessionToken).subscribe(data => {
-        this.playerActivities = data;
-        console.log("got playerActivities: ", this.playerActivities);
-      });
+      this.getPlayersLists();
     });
   }
 
   respondToFriendRequest(requestId: string, isAccept: boolean) {
     console.log("responding to friend request: ", requestId, isAccept);
     this.gameService.respondToFriendRequest(this.currentUser.sessionToken, requestId, isAccept).subscribe(() => {
-      this.gameService.getPlayerActivities(this.currentUser.sessionToken).subscribe(data => {
-        this.playerActivities = data;
-        console.log("got playerActivities: ", this.playerActivities);
-      });
-      this.gameService.getFriends(this.currentUser.sessionToken).subscribe(data => {
-        this.friends = data;
-        console.log("got friends: ", this.friends);
-      });
+      this.getPlayersLists();
     });
   }
 
