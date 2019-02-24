@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Card } from '../models/card.model';
 import { PutCardResponse } from '../models/putcardresponse.model';
-import { PlayerActivity } from '../models/playeractivity.model';
+import { FriendRequest } from '../models/friendrequest.model';
 import { Player } from '../models/player.model';
 
 @Injectable()
@@ -73,15 +73,15 @@ export class GameService {
     }));
   }
 
-  getPlayerActivities(sessionToken: string): Observable<PlayerActivity[]> {
-    return this.apiService.get('/players/activities', sessionToken).pipe(map(data => {
+  getFriendRequests(sessionToken: string): Observable<FriendRequest[]> {
+    return this.apiService.get('/players/friends/requests', sessionToken).pipe(map(data => {
       return data;
     }));
   }
 
   addFriend(sessionToken: string, usernameToAdd: string): any {
     let body = {'requestee': usernameToAdd};
-    return this.apiService.post('/players/friends/request', body, sessionToken).pipe(map(data => {
+    return this.apiService.post('/players/friends/requests', body, sessionToken).pipe(map(data => {
       return data;
     }));
   }
@@ -91,7 +91,7 @@ export class GameService {
       'requestId': requestId,
       'isAccept': isAccept
     };
-    return this.apiService.put('/players/friends/respond', body, sessionToken).pipe(map(data => {
+    return this.apiService.put('/players/friends/responses', body, sessionToken).pipe(map(data => {
       return data;
     }));
   }

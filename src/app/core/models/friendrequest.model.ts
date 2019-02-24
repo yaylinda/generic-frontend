@@ -1,4 +1,4 @@
-export interface PlayerActivity {
+export interface FriendRequest {
     id: string;
     requester: string;
     requestee: string;
