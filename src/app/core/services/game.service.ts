@@ -73,7 +73,7 @@ export class GameService {
     }));
   }
 
-  getPlayerActivities(sessionToken: string): Observable<FriendRequest[]> {
+  getFriendRequests(sessionToken: string): Observable<FriendRequest[]> {
     return this.apiService.get('/players/friends/requests', sessionToken).pipe(map(data => {
       return data;
     }));

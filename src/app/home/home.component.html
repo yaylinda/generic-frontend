@@ -96,10 +96,13 @@
               <mat-chip>Opponent: {{activeGame.opponentName}}</mat-chip>
               <mat-chip>Status: {{activeGame.status}}</mat-chip>
               <mat-chip>Score: {{activeGame.points}} vs. {{activeGame.opponentPoints}}</mat-chip>
-              <mat-chip>Number of Cards Played: {{activeGame.numCardsPlayed}}</mat-chip>
-              <mat-chip>Number of Turns: {{activeGame.numTurns}}</mat-chip>
+              <mat-chip>Cards Played: {{activeGame.gameStats.totalCardsPlayed}}</mat-chip>
+              <mat-chip>Number of Turns: {{activeGame.gameStats.numTurns}}</mat-chip>
+              <mat-chip>Total Energy Used: {{activeGame.gameStats.totalEnergyUsed}}</mat-chip>
+              <mat-chip>Total Might Placed: {{activeGame.gameStats.totalMightPlaced}}</mat-chip>
+              <mat-chip>Total Advancement Points: {{activeGame.gameStats.totalAdvancementPoints}}</mat-chip>
               <mat-chip>Created: {{activeGame.createdDate}}</mat-chip>
-              <mat-chip>Player2 Joined : {{activeGame.player2JoinDate}}</mat-chip>
+              <mat-chip>Player 2 Joined: {{activeGame.player2JoinDate}}</mat-chip>
               <mat-chip>Last Modified: {{activeGame.lastModifiedDate}}</mat-chip>
               <mat-chip>Completed: {{activeGame.completedDate}}</mat-chip>
             </mat-chip-list>
@@ -159,14 +162,15 @@
             <mat-toolbar color="primary">
               <span>My Friends</span>
             </mat-toolbar>
-            <mat-grid-list *ngIf="friends.length > 0" rowHeight="14rem" [cols]="gamesListNumCols">
+            <mat-grid-list *ngIf="friends.length > 0" rowHeight="15rem" [cols]="gamesListNumCols">
               <mat-grid-tile *ngFor="let friend of friends; let i = index;">
                 <mat-card>
                   <mat-card-header>
                     <mat-icon mat-card-avatar matListIcon>face</mat-icon>
                     <mat-card-title>{{friend.username}}</mat-card-title>
                     <mat-card-subtitle>Last Active: {{friend.lastActiveDate}}</mat-card-subtitle>
-                    <mat-card-subtitle>Games: {{friend.numPlayed}}</mat-card-subtitle>
+                    <mat-card-subtitle>Last Activity: {{friend.lastActivity}}</mat-card-subtitle>
+                    <mat-card-subtitle>Games: {{friend.numGames}}</mat-card-subtitle>
                     <mat-card-subtitle>Wins: {{friend.numWins}}</mat-card-subtitle>
                   </mat-card-header>
                   <mat-card-actions>
@@ -181,14 +185,15 @@
             <mat-toolbar color="primary">
               <span>Other Players</span>
             </mat-toolbar>
-            <mat-grid-list *ngIf="otherPlayers.length > 0" rowHeight="14rem" [cols]="gamesListNumCols">
+            <mat-grid-list *ngIf="otherPlayers.length > 0" rowHeight="15rem" [cols]="gamesListNumCols">
               <mat-grid-tile *ngFor="let player of otherPlayers; let i = index;">
                 <mat-card>
                   <mat-card-header>
                     <mat-icon mat-card-avatar matListIcon>face</mat-icon>
                     <mat-card-title>{{player.username}}</mat-card-title>
                     <mat-card-subtitle>Last Active: {{player.lastActiveDate}}</mat-card-subtitle>
-                    <mat-card-subtitle>Games: {{player.numPlayed}}</mat-card-subtitle>
+                    <mat-card-subtitle>Last Activity: {{player.lastActivity}}</mat-card-subtitle>
+                    <mat-card-subtitle>Games: {{player.numGames}}</mat-card-subtitle>
                     <mat-card-subtitle>Wins: {{player.numWins}}</mat-card-subtitle>
                   </mat-card-header>
                   <mat-card-actions *ngIf="player.canAdd">

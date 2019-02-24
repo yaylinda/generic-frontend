@@ -3,6 +3,6 @@ export interface Player {
     lastActiveDate: string;
     lastActivity: string;
     numWins: number;
-    numPlayed: number;
+    numGames: number;
     canAdd: boolean;
 }

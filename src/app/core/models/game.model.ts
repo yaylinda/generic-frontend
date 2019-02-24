@@ -1,5 +1,6 @@
 import { Cell } from './cell.model';
 import { Card } from './card.model';
+import { GameStats } from './gamestats.model';
 
 export interface Game {
     id: string;
@@ -14,8 +15,6 @@ export interface Game {
     energy: number;
     status: string;
     cards: Card[];
-    numCardsPlayed: number;
-    numTurns: number;
     numRows: number;
     numCols: number;
     createdDate: string;
@@ -23,4 +22,8 @@ export interface Game {
     lastModifiedDate: string;
     completedDate: string;
     winner: string;
+    gameStats: GameStats;
+    endzone: Card[];
+    opponentEndzone: Card[];
+
 }
