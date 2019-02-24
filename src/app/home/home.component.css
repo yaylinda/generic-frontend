@@ -18,6 +18,10 @@ mat-list-item {
   color: red; 
 }
 
+.color-blue {
+  color: blue;
+}
+
 .cell {
   background-color: lightcyan;
 }

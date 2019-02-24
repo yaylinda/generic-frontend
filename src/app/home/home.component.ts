@@ -14,6 +14,8 @@ import {MatSnackBar} from '@angular/material';
 import { environment } from '../../environments/environment';
 import { getLocaleDayNames } from '@angular/common';
 import {MatTabChangeEvent} from '@angular/material/tabs'
+import { Player } from '../core/models/player.model';
+import { PlayerActivity } from '../core/models/playeractivity.model';
 
 @Component({
   selector: 'app-home-page',
@@ -39,6 +41,10 @@ export class HomeComponent implements OnInit {
   joinableGames: Game[] = [];
   activeGame: Game;
   activeGameCells: Cell[];
+
+  friends: Player[] = [];
+  otherPlayers: Player[] = [];
+  playerActivities: PlayerActivity[] = [];
 
   previouslyClickedCard: Card;
   previouslyClickedCardIndex: number;
@@ -118,14 +124,39 @@ export class HomeComponent implements OnInit {
       that.stompClient.subscribe("/topic/gameCreated", (message) => {
         console.log("game created... updating joinable games: ", message);
         if (message.body != that.currentUser.username) {
-          that.gameService.getJoinableGames(that.currentUser.sessionToken).subscribe(games => {
-            console.log('result from getJoinableGames:', getLocaleDayNames)
-            that.joinableGames = games;
-          });
+          that.getGamesLists();
+        }
+      });
+
+      // when another player requests currentUser as friend
+      that.stompClient.subscribe("/topic/friendRequestReceived/" + that.currentUser.username, (message) => {
+        console.log("got a friend request", message);
+        if (message.body) {
+          that.getPlayersLists();
+        }
+      });
+
+      // when another player responds to currentUser's friend request
+      that.stompClient.subscribe("/topic/friendRequestResponse/" + that.currentUser.username, (message) => {
+        console.log("got response for friend request", message);
+        if (message.body) {
+          that.getPlayersLists();
         }
       });
       
     });
+  }
+
+  selectedTabChange(event: MatTabChangeEvent) {
+    console.log("tab change");
+    if (event.index === 0) {
+      this.inGameMode = false;
+      this.activeGame = null;
+      this.activeGameCells = [];
+      this.getGamesLists();
+    } else if (event.index === 2) {
+      this.getPlayersLists();
+    }
   }
 
   joinGame(gameId) {
@@ -148,6 +179,16 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  inviteToGame(player2: string) {
+    console.log('starting game with: ', player2);
+    this.gameService.inviteToGame(this.currentUser.sessionToken, player2).subscribe(newGame => {
+      console.log("new game result: ", newGame);
+      this.updateActiveGameAndCellsList(newGame);
+      this.inGameMode = true;
+      this.selectedTab.setValue(1);
+    });
+  }
+
   handleClickedGame(gameIndex: number, useActiveGamesList: boolean) {
     console.log('clicked game at index: ', gameIndex);
     if (useActiveGamesList) {
@@ -157,16 +198,6 @@ export class HomeComponent implements OnInit {
     }
     this.inGameMode = true;
     this.selectedTab.setValue(1);
-  }
-
-  selectedTabChange(event: MatTabChangeEvent) {
-    console.log("tab change");
-    if (event.index === 0) {
-      this.inGameMode = false;
-      this.activeGame = null;
-      this.activeGameCells = [];
-      this.getGamesLists();
-    }
   }
 
   endTurn(dicardHand: boolean) {
@@ -211,6 +242,24 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  addFriend(usernameToAdd: string) {
+    console.log("adding to friends: ", usernameToAdd);
+    this.gameService.addFriend(this.currentUser.sessionToken, usernameToAdd).subscribe(() => {
+      this.getPlayersLists();
+    });
+  }
+
+  respondToFriendRequest(requestId: string, isAccept: boolean) {
+    console.log("responding to friend request: ", requestId, isAccept);
+    this.gameService.respondToFriendRequest(this.currentUser.sessionToken, requestId, isAccept).subscribe(() => {
+      this.getPlayersLists();
+    });
+  }
+
+  /****************************************************************************
+   * Private Helper Methods
+   ***************************************************************************/
+
   getGamesLists() {
     this.games = [];
     this.joinableGames = [];
@@ -230,6 +279,24 @@ export class HomeComponent implements OnInit {
     this.gameService.getJoinableGames(this.currentUser.sessionToken).subscribe(data => {
       this.joinableGames = data;
       console.log("joinableGames: ", this.joinableGames);
+    });
+  }
+
+  getPlayersLists() {
+    this.friends = [];
+    this.otherPlayers = [];
+    this.playerActivities = [];
+    this.gameService.getFriends(this.currentUser.sessionToken).subscribe(data => {
+      this.friends = data;
+      console.log("got friends: ", this.friends);
+    });
+    this.gameService.getOtherPlayers(this.currentUser.sessionToken).subscribe(data => {
+      this.otherPlayers = data;
+      console.log("got otherPlayers: ", this.otherPlayers);
+    });
+    this.gameService.getPlayerActivities(this.currentUser.sessionToken).subscribe(data => {
+      this.playerActivities = data;
+      console.log("got playerActivities: ", this.playerActivities);
     });
   }
 

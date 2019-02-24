@@ -6,10 +6,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Card } from '../models/card.model';
 import { PutCardResponse } from '../models/putcardresponse.model';
+import { PlayerActivity } from '../models/playeractivity.model';
+import { Player } from '../models/player.model';
 
 @Injectable()
 export class GameService {
-
   constructor(private apiService: ApiService) { }
 
   getGames(sessionToken: string): Observable<Game[]> {
@@ -56,6 +57,50 @@ export class GameService {
       'card': card
     };
     return this.apiService.put('/games/putCard/' + gameId, putCardDTO, sessionToken).pipe(map(data => {
+      return data;
+    }));
+  }
+
+  getFriends(sessionToken: string): Observable<Player[]> {
+    return this.apiService.get('/players/friends', sessionToken).pipe(map(data => {
+      return data;
+    }));
+  }
+
+  getOtherPlayers(sessionToken: string): Observable<Player[]> {
+    return this.apiService.get('/players', sessionToken).pipe(map(data => {
+      return data;
+    }));
+  }
+
+  getPlayerActivities(sessionToken: string): Observable<PlayerActivity[]> {
+    return this.apiService.get('/players/activities', sessionToken).pipe(map(data => {
+      return data;
+    }));
+  }
+
+  addFriend(sessionToken: string, usernameToAdd: string): any {
+    let body = {'requestee': usernameToAdd};
+    return this.apiService.post('/players/friends/request', body, sessionToken).pipe(map(data => {
+      return data;
+    }));
+  }
+
+  respondToFriendRequest(sessionToken: string, requestId: string, isAccept: boolean): any {
+    let body = {
+      'requestId': requestId,
+      'isAccept': isAccept
+    };
+    return this.apiService.put('/players/friends/respond', body, sessionToken).pipe(map(data => {
+      return data;
+    }));
+  }
+
+  inviteToGame(sessionToken: string, player2: string) {
+    let body = {
+      'player2': player2
+    };
+    return this.apiService.post('/games/invite', body, sessionToken).pipe(map(data => {
       return data;
     }));
   }
