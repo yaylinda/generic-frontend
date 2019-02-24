@@ -12,10 +12,9 @@ import { Cell } from '../core/models/cell.model';
 import {MatSnackBar} from '@angular/material';
 
 import { environment } from '../../environments/environment';
-import { getLocaleDayNames } from '@angular/common';
 import {MatTabChangeEvent} from '@angular/material/tabs'
 import { Player } from '../core/models/player.model';
-import { PlayerActivity } from '../core/models/playeractivity.model';
+import { FriendRequest } from '../core/models/friendrequest.model';
 
 @Component({
   selector: 'app-home-page',
@@ -44,7 +43,7 @@ export class HomeComponent implements OnInit {
 
   friends: Player[] = [];
   otherPlayers: Player[] = [];
-  playerActivities: PlayerActivity[] = [];
+  friendRequests: FriendRequest[] = [];
 
   previouslyClickedCard: Card;
   previouslyClickedCardIndex: number;

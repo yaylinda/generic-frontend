@@ -199,31 +199,31 @@
             </mat-grid-list>
             <p *ngIf="otherPlayers.length === 0">There are no other Players.</p>
 
-            <!-- Activity -->
+            <!-- Friend Requests -->
             <mat-toolbar color="primary">
-              <span>Activity</span>
+              <span>Friend Requests</span>
             </mat-toolbar>
-            <mat-grid-list *ngIf="playerActivities.length > 0" rowHeight="15rem" [cols]="gamesListNumCols">
-              <mat-grid-tile *ngFor="let activity of playerActivities; let i = index;">
+            <mat-grid-list *ngIf="friendRequests.length > 0" rowHeight="15rem" [cols]="gamesListNumCols">
+              <mat-grid-tile *ngFor="let request of friendRequests; let i = index;">
                 <mat-card>
                   <mat-card-header>
-                    <mat-icon mat-card-avatar *ngIf="activity.status === 'REQUESTED'" class="color-blue" matListIcon>done</mat-icon>
-                    <mat-icon mat-card-avatar *ngIf="activity.status === 'ACCEPTED'" class="color-green" matListIcon>done_all</mat-icon>
-                    <mat-icon mat-card-avatar *ngIf="activity.status === 'DECLINED'" class="color-red" matListIcon>clear</mat-icon>
-                    <mat-card-title>{{activity.status}}</mat-card-title>
-                    <mat-card-subtitle>From: {{activity.requester}}</mat-card-subtitle>
-                    <mat-card-subtitle>To: {{activity.requestee}}</mat-card-subtitle>
-                    <mat-card-subtitle>Requested: {{activity.requestDate}}</mat-card-subtitle>
-                    <mat-card-subtitle>Response: {{activity.responseDate}}</mat-card-subtitle>
+                    <mat-icon mat-card-avatar *ngIf="request.status === 'REQUESTED'" class="color-blue" matListIcon>done</mat-icon>
+                    <mat-icon mat-card-avatar *ngIf="request.status === 'ACCEPTED'" class="color-green" matListIcon>done_all</mat-icon>
+                    <mat-icon mat-card-avatar *ngIf="request.status === 'DECLINED'" class="color-red" matListIcon>clear</mat-icon>
+                    <mat-card-title>{{request.status}}</mat-card-title>
+                    <mat-card-subtitle>From: {{request.requester}}</mat-card-subtitle>
+                    <mat-card-subtitle>To: {{request.requestee}}</mat-card-subtitle>
+                    <mat-card-subtitle>Requested: {{request.requestDate}}</mat-card-subtitle>
+                    <mat-card-subtitle>Response: {{request.responseDate}}</mat-card-subtitle>
                   </mat-card-header>
-                  <mat-card-actions *ngIf="activity.status === 'REQUESTED' && activity.requestee === currentUser.username">
-                    <button (click)="respondToFriendRequest(activity.id, true)" align="end" mat-button>ACCEPT</button>
-                    <button (click)="respondToFriendRequest(activity.id, false)" align="end" mat-button>DECLINE</button>
+                  <mat-card-actions *ngIf="request.status === 'REQUESTED' && request.requestee === currentUser.username">
+                    <button (click)="respondToFriendRequest(request.id, true)" align="end" mat-button>ACCEPT</button>
+                    <button (click)="respondToFriendRequest(request.id, false)" align="end" mat-button>DECLINE</button>
                   </mat-card-actions>
                 </mat-card>
               </mat-grid-tile>
             </mat-grid-list>
-            <p *ngIf="playerActivities.length === 0">You have no Activities.</p>
+            <p *ngIf="friendRequests.length === 0">You have no Requests.</p>
 
           </div>
         </mat-tab>
